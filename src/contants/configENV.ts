@@ -6,5 +6,6 @@ config({
 
 export const configEnv={
   PORT:process.env.PORT as string ,
+  PRIMARY_KEY:process.env.PRIMARY_KEY as string 
   
 }

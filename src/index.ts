@@ -33,8 +33,8 @@ const options = {
 }
 
 const openapiSpecification = swaggerJsdoc(options);
-const file = fs.readFileSync('./swagger.yaml', 'utf8')
-const swaggerDocument = YAML.parse(file)
+// const file = fs.readFileSync('./swagger.yaml', 'utf8')
+// const swaggerDocument = YAML.parse(file)
 
 const app = express()
 const port = configEnv.PORT || 4000
