@@ -5,8 +5,10 @@ import { signJWT } from "~/utils/jwt";
 import { configEnv } from "~/contants/configENV";
 
 export const userServices = {
+
   access_token: async (user_id: string) => await signJWT({ payload: { user_id }, privateKey: configEnv.PRIMARY_KEY, options: { expiresIn: '1h' } }),
   refresh_token: async (user_id: string) => await signJWT({ payload: { user_id }, privateKey: configEnv.PRIMARY_KEY, options: { expiresIn: '10h' } }),
+
   register: async (payload: Pick<userType, 'name' | 'password' | 'email' | 'date_of_birth'>) => {
     const rs = await userModel.create({
       ...payload,
@@ -21,5 +23,10 @@ export const userServices = {
         refresh_token
       }
     }
+  },
+  
+  checkEmailExist:async(email:string)=>{
+    const checkExist=await userModel.findOne({email})
+    return Boolean(checkExist)
   }
 }

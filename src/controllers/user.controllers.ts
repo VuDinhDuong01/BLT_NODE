@@ -1,8 +1,14 @@
-import { Request, Response, NextFunction } from "express"
-import { userServices } from "~/services/user.services"
-export const userControllers = {
+import { Request, Response, NextFunction } from 'express'
+import { ParamsDictionary } from 'express-serve-static-core'
 
-  register: async (req: Request, res: Response, next: NextFunction) => {
+import { userServices } from '~/services/user.services'
+import { userType } from '~/types/users.types'
+export const userControllers = {
+  register: async (
+    req: Request<ParamsDictionary, any, Pick<userType, 'name' | 'password' | 'email' | 'date_of_birth'>>,
+    res: Response,
+    next: NextFunction
+  ) => {
     try {
       const response = await userServices.register(req.body)
       return res.json(response)

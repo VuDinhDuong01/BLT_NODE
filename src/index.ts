@@ -12,6 +12,7 @@ import { configEnv } from './contants/configENV'
 import route from './routes/index.routes'
 import { connectMongoose } from './models/connectDB/connectMongoose'
 import { connectRedis } from './models/connectDB/connectRedis'
+import { handleError } from './utils/handleError'
 
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
@@ -45,12 +46,16 @@ app.use(cors({
   "methods": "GET,HEAD,PUT,PATCH,POST,DELETE",
   "allowedHeaders": ['Content-Type', 'Authorization']
 }))
+
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(openapiSpecification));
 app.use(limiter)
 app.use(helmet())
+
 connectMongoose()
 connectRedis()
+
 route(app)
+app.use(handleError)
 app.listen(port, () => {
   console.log(`Example app listening on port http://localhost:${port}`)
 })

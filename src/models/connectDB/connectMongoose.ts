@@ -1,8 +1,8 @@
 import mongoose from "mongoose"
-
+import { configEnv } from "~/contants/configENV"
 export const connectMongoose = async () => {
   try {
-    await mongoose.connect('mongodb+srv://ngocduong:user123@ngocduong.t3arsrx.mongodb.net/btl')
+    await mongoose.connect(`${configEnv.URL_MONGOOSE}btl`)
     console.log('connect successfully')
   } catch (e) {
     console.log('connect failed')
