@@ -639,6 +639,8 @@ components:
           example: 100000
         username:
           type: string
+          minLength: 1
+          maxLength: 255
           example: fehguy
         address:
           type: array
