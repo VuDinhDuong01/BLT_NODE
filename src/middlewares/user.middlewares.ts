@@ -5,6 +5,8 @@ import { userServices } from '~/services/user.services'
 import { validate } from '~/utils/validation'
 import { configEnv } from '~/contants/configENV'
 import { verifyJWT } from '~/utils/jwt'
+import { userModel } from '~/models/model/user.model'
+import { hashPassword } from '~/utils/hashPassword'
 
 
 export const validationRegister = validate(
@@ -36,7 +38,7 @@ export const validationRegister = validate(
         isEmpty: false,
         isLength: {
           options: { min: 5, max: 25 },
-          errorMessage: 'Password should be at least 8 chars'
+          errorMessage: 'Password should be at least 5 chars'
         }
       },
       date_of_birth: {
@@ -70,6 +72,40 @@ export const validationEmailVerifyToken = validate(
           }
         }
       }
+    },
+    ['params']
+  )
+)
+
+export const validationLogin = validate(
+  checkSchema(
+    {
+      email: {
+        isEmpty: false,
+        isEmail: true,
+        errorMessage: 'email phải đúng định dạng',
+        custom: {
+          options: async (value, { req }) => {
+            const checkEmail = await userModel.findOne({ email: req.body.email })
+            if (!checkEmail) {
+              throw new errorWithStatus({ message: "email của bạn không tồn tại", status: 401 })
+            }
+            else {
+              if (checkEmail.password !== hashPassword(req.body.password)) {
+                throw new errorWithStatus({ message: "bạn nhập mật khẩu  không đúng", status: 401 })
+              }
+              return true
+            }
+          }
+        }
+      },
+      password: {
+        isEmpty: false,
+        isLength: {
+          options: { min: 5, max: 25 },
+          errorMessage: 'Password should be at least 5 chars'
+        }
+      },
     },
     ['body']
   )

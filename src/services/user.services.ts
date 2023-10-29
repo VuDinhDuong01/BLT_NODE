@@ -67,5 +67,19 @@ export const userServices = {
     return {
       message: 'verify_email_token successfully'
     }
+  },
+  login: async (email: string) => {
+    const res = await userModel.findOne({ email }).select("-password -verify -email_verify_token -forgot_password_token") as userType
+    const [access_token, refresh_token] = await Promise.all([
+      userServices.access_token({ user_id: res._id as string, time: '1h' }),
+      userServices.refresh_token(res._id as string)
+    ])
+    return {
+      message: "login successfully",
+      data: {
+        access_token, refresh_token,
+        user: res
+      }
+    }
   }
 }

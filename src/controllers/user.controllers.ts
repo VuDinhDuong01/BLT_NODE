@@ -24,5 +24,15 @@ export const userControllers = {
     } catch (e) {
       console.log(e)
     }
+  },
+  login: async (req: Request, res: Response) => {
+    
+    try {
+      const {email}= req.body
+      const result = await userServices.login(email)
+      return res.json(result)
+    } catch (error) {
+      console.log(error)
+    }
   }
 }
