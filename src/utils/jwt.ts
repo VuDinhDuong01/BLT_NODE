@@ -6,7 +6,7 @@ interface JWT {
   options?: jwt.SignOptions
 }
 
-export const signJWT = ({ payload, privateKey, options = { algorithm: 'RS256' } }: JWT) => {
+export const signJWT = ({ payload, privateKey, options = { algorithm: 'HS256' } }: JWT) => {
   return new Promise<string>((resolve, rejects) => {
     jwt.sign(payload, privateKey, options, function (err, token) {
       if (!err) {

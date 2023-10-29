@@ -110,3 +110,28 @@ export const validationLogin = validate(
     ['body']
   )
 )
+
+
+export const validationRefreshToken = validate(
+  checkSchema(
+    {
+      refresh_token: {
+        custom: {
+          options: async (value, { req }) => {
+            try {
+              const verifyRefreshToken = await verifyJWT({ privateKey: configEnv.PRIMARY_KEY_REFRESH_TOKEN, payload: req.body.refresh_token })
+              req.refresh_token = verifyRefreshToken
+              return true
+            } catch (error) {
+              throw new errorWithStatus({
+                message: "refresh_token không đúng hoặc hết hạn",
+                status: 401
+              })
+            }
+          }
+        }
+      },
+    },
+    ['body']
+  )
+)

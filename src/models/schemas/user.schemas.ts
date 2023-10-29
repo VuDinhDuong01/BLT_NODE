@@ -19,7 +19,10 @@ export const userSchema = new Schema<userType>(
     website: { type: String, default: '' },
     username: { type: String, default: '' },
     avatar: { type: String, default: '' },
-    cover_photo: { type: String, default: '' }
+    cover_photo: { type: String, default: '' },
+    created_at: { type: Date, default: Date.now },
+    updated_at: { type: Date, default: Date.now }
+
   },
   {
     collection: 'users'

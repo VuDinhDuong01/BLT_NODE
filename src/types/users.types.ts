@@ -13,4 +13,14 @@ export type userType = {
   username?: string
   avatar?: string,
   cover_photo?: string
+  updated_at?:Date,
+  created_at?:Date
+}
+
+export interface RefreshTokenType{
+  refresh_token: string ,
+  _id?:string 
+  user_id:string 
+  updated_at?:Date,
+  created_at?:Date
 }

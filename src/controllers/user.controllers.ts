@@ -1,5 +1,4 @@
 import { Request, Response, NextFunction } from 'express'
-import { ParamsDictionary } from 'express-serve-static-core'
 
 import { userServices } from '~/services/user.services'
 import { EmailTokenTypes } from '~/type'
@@ -26,13 +25,23 @@ export const userControllers = {
     }
   },
   login: async (req: Request, res: Response) => {
-    
+
     try {
-      const {email}= req.body
+      const { email } = req.body
       const result = await userServices.login(email)
       return res.json(result)
     } catch (error) {
       console.log(error)
+    }
+  },
+  refresh_token: async (req: Request, res: Response) => {
+    try {
+      const { user_id, exp } = req.refresh_token as EmailTokenTypes
+      const { refresh_token } = req.body
+      const result = await userServices.refreshToken({ user_id, exp, token: refresh_token })
+      return res.json(result)
+    } catch (err) {
+      console.log(err)
     }
   }
 }
