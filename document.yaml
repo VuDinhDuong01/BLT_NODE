@@ -1,7 +1,7 @@
 openapi: 3.0.3
 info:
   title: API With BTL
-  description: Api bài tập lớn 
+  description: Api bài tập lớn
   termsOfService: http://swagger.io/terms/
   contact:
     email: duong2lophot@gmail.com
@@ -13,7 +13,7 @@ servers:
 tags:
   - name: auth
     description: Đăng ký tài khoản
- 
+
 paths:
   /register:
     post:
@@ -24,28 +24,32 @@ paths:
         content:
           application/json:
             schema:
-             type: object
-             properties:
-              name: 
-                type: string 
-                minLength: 1
-                maxLength: 255
-                example: vudinhduong
-              password:
-               type: string 
-               minLength: 5
-               maxLength: 25
-               example: 12345
-              email:
-               type: string 
-               example: duong@gmail.com
-              date_of_birth:
-               type: string 
-               format: date
-               example: 1996-0204
+              type: object
+              properties:
+                name:
+                  type: string
+                  minLength: 1
+                  maxLength: 255
+                  description: name phải nhập tối thiểu 1 kí tự và max là 255 kí tự
+                  example: vudinhduong
+                password:
+                  type: string
+                  minLength: 5
+                  maxLength: 25
+                  description: password phải nhập ít nhất 5 kí tự và nhiều nhất 25 kí tự
+                  example: 12345
+                email:
+                  type: string
+                  example: duong@gmail.com
+                  description: phải nhập là email
+                date_of_birth:
+                  type: string
+                  format: date
+                  example: 1996-0204
+                  description: kiểu IOString8601
         required: true
       responses:
-        '200':
+        "200":
           description: Successful operation
           content:
             application/json:
@@ -53,29 +57,61 @@ paths:
                 type: object
                 properties:
                   message:
-                   type: string 
-                   example: register successfully  
-                  schema:
-                   type: object
-                   properties:
-                     
-                    access_token:
-                     type: string 
-                     example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNjUzZTM3OTE2NmE3N2YyM2NjODZjMjQ5IiwiaWF0IjoxNjk4NTc2MjczLCJleHAiOjE2OTg1Nzk4NzN9.yyo6Y8Kxe8r9SHoS2HavjcfTTAq8o3V_DxOJV-juvhQ
-                    refresh_token:
-                     type: string 
-                     example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNjUzZTM3OTE2NmE3N2YyM2NjODZjMjQ5IiwiaWF0IjoxNjk4NTc2MjczLCJleHAiOjE2OTg1Nzk4NzN9.yyo6Y8Kxe8r9SHoS2HavjcfTTAq8o3V_DxOJV-juvhQ
-        '422':
+                    type: string
+                    example: register successfully
+                  data:
+                    type: object
+                    properties:
+                      access_token:
+                        type: string
+                        example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNjUzZTM3OTE2NmE3N2YyM2NjODZjMjQ5IiwiaWF0IjoxNjk4NTc2MjczLCJleHAiOjE2OTg1Nzk4NzN9.yyo6Y8Kxe8r9SHoS2HavjcfTTAq8o3V_DxOJV-juvhQ
+                      refresh_token:
+                        type: string
+                        example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNjUzZTM3OTE2NmE3N2YyM2NjODZjMjQ5IiwiaWF0IjoxNjk4NTc2MjczLCJleHAiOjE2OTg1Nzk4NzN9.yyo6Y8Kxe8r9SHoS2HavjcfTTAq8o3V_DxOJV-juvhQ
+        "401":
           description: Invalid ID supplied
           content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  email:
+                    type: string
+                    example: email đã tồn tại
+  /email_verify_token/{token}:
+    post:
+      tags:
+       - auth
+      parameters:
+        - name: token
+          in: path
+          description: token
+          required: true
+          schema:
+            type: string 
+            example: đkr3i4u3d39438
+      responses:
+        '200':
+          description: verify email 
+          content:
+            application/json:
+              schema:
+                properties:
+                  message: 
+                   type: string  
+                   example: verify email successfuly   
+        '402':
+         description: error token hết hạn
+         content:
            application/json:
             schema: 
-             type: object
              properties:
-              email: 
-               type: string 
-               example: email đã tồn tại
-               
+               message:
+                type: string 
+                example: token đã hết hạn hoặc không đúng     
+        
+
+
 components:
   schemas:
     Order:
@@ -124,7 +160,7 @@ components:
             name: addresses
             wrapped: true
           items:
-            $ref: '#/components/schemas/Address'
+            $ref: "#/components/schemas/Address"
       xml:
         name: customer
     Address:
@@ -141,7 +177,7 @@ components:
           example: CA
         zip:
           type: string
-          example: '94301'
+          example: "94301"
       xml:
         name: address
     Category:
@@ -177,10 +213,10 @@ components:
           example: john@email.com
         password:
           type: string
-          example: '12345'
+          example: "12345"
         phone:
           type: string
-          example: '12345'
+          example: "12345"
         userStatus:
           type: integer
           description: User Status
@@ -212,7 +248,7 @@ components:
           type: string
           example: doggie
         category:
-          $ref: '#/components/schemas/Category'
+          $ref: "#/components/schemas/Category"
         photoUrls:
           type: array
           xml:
@@ -226,7 +262,7 @@ components:
           xml:
             wrapped: true
           items:
-            $ref: '#/components/schemas/Tag'
+            $ref: "#/components/schemas/Tag"
         status:
           type: string
           description: pet status in the store
@@ -247,17 +283,17 @@ components:
         message:
           type: string
       xml:
-        name: '##default'
+        name: "##default"
   requestBodies:
     Pet:
       description: Pet object that needs to be added to the store
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/Pet'
+            $ref: "#/components/schemas/Pet"
         application/xml:
           schema:
-            $ref: '#/components/schemas/Pet'
+            $ref: "#/components/schemas/Pet"
     UserArray:
       description: List of user object
       content:
@@ -265,7 +301,7 @@ components:
           schema:
             type: array
             items:
-              $ref: '#/components/schemas/User'
+              $ref: "#/components/schemas/User"
   securitySchemes:
     petstore_auth:
       type: oauth2
