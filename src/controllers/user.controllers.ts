@@ -15,5 +15,12 @@ export const userControllers = {
     } catch (error) {
       console.log(error)
     }
-  }
+  },
+  // EmailVerifyToken: async (req: Request<ParamsDictionary, any, Pick<userType, 'email_verify_token'>>, res: Response, next: NextFunction) => {
+  //   try {
+
+  //   } catch (e) {
+  //     console.log(e)
+  //   }
+  // }
 }

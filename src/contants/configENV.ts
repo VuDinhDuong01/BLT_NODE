@@ -9,5 +9,10 @@ export const configEnv = {
   PORT: process.env.PORT as string,
   PRIMARY_KEY: process.env.PRIMARY_KEY as string,
   URL_MONGOOSE: process.env.URL_MONGOOSE as string,
-  URL_REDIS: process.env.URL_REDIS as string
+  URL_REDIS: process.env.URL_REDIS as string,
+  secretAccessKey:process.env.secretAccessKey as string ,
+  accessKeyId:process.env.accessKeyId  as string ,
+  region:process.env.region as string ,
+  fromEmail:process.env.fromEmail as string ,
+  toAddress:process.env.toAddress as string 
 }

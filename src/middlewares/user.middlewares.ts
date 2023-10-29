@@ -2,6 +2,8 @@ import { checkSchema } from 'express-validator/src/middlewares/schema'
 import { errorWithStatus } from '~/contants/errorMessage'
 import { userServices } from '~/services/user.services'
 import { validate } from '~/utils/validation'
+import { configEnv } from '~/contants/configENV'
+import { verifyJWT } from '~/utils/jwt'
 
 export const validationRegister = validate(
   checkSchema({
@@ -42,5 +44,22 @@ export const validationRegister = validate(
       },
       errorMessage: 'ngày tháng phải đúng định dạng'
     }
-  })
+  }, ['body'])
 )
+
+export const validationEmailVerifyToken = validate(checkSchema({
+  email_verify_token: {
+    isEmpty: false,
+    custom: {
+      options: async (value, { req }) => {
+        try {
+          const token = await verifyJWT({ privateKey: configEnv.PRIMARY_KEY, payload: req.body.email_verify_token })
+          req.email_verify_token = token
+          return true
+        } catch (error) {
+          throw new errorWithStatus({ message: "token hết hạn", status: 401 })
+        }
+      }
+    }
+  }
+}, ['body']))
