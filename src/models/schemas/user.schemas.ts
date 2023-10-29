@@ -1,7 +1,7 @@
-import {   Schema} from 'mongoose'
+import { Schema } from 'mongoose'
 import { userType } from '~/types/users.types'
 
-enum VerifyEmail {
+export enum VerifyEmail {
   NotAuthenticated, Authenticated,
 }
 
@@ -9,7 +9,7 @@ export const userSchema = new Schema<userType>(
   {
     name: { type: String, default: '' },
     email: { type: String, default: '' },
-    date_of_birth: { type: String, default:''},
+    date_of_birth: { type: String, default: '' },
     password: { type: String, default: '' },
     email_verify_token: { type: String, default: '' },
     forgot_password_token: { type: String, default: '' },
@@ -23,8 +23,6 @@ export const userSchema = new Schema<userType>(
   },
   {
     collection: 'users'
-  }
-
-)
+  })
 
 export default userSchema

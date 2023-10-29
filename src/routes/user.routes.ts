@@ -5,6 +5,6 @@ import { validationEmailVerifyToken, validationRegister } from "~/middlewares/us
 const route = Router()
 
 route.post('/register', validationRegister, userControllers.register)
-// route.post('/email_verify_token', validationEmailVerifyToken, userControllers.EmailVerifyToken)
+ route.post('/email_verify_token/:token', validationEmailVerifyToken,userControllers.EmailVerifyToken)
 
 export default route

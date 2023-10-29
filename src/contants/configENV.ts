@@ -14,5 +14,6 @@ export const configEnv = {
   accessKeyId:process.env.accessKeyId  as string ,
   region:process.env.region as string ,
   fromEmail:process.env.fromEmail as string ,
-  toAddress:process.env.toAddress as string 
+  toAddress:process.env.toAddress as string  ,
+  URLFE:process.env.localhost as string 
 }

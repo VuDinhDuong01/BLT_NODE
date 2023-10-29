@@ -21,6 +21,7 @@
     "@types/express": "^4.17.20",
     "@types/jsonwebtoken": "^9.0.4",
     "@types/lodash": "^4.14.200",
+    "@types/otp-generator": "^4.0.1",
     "@types/swagger-jsdoc": "^6.0.2",
     "@types/swagger-ui-express": "^4.1.5",
     "cors": "^2.8.5",

@@ -1,3 +1,4 @@
+/* eslint-disable no-unsafe-optional-chaining */
 import mongoose from 'mongoose'
 
 import { userModel } from '~/models/model/user.model'
@@ -6,42 +7,41 @@ import { hashPassword } from '~/utils/hashPassword'
 import { signJWT } from '~/utils/jwt'
 import { configEnv } from '~/contants/configENV'
 import { sendMail } from '~/utils/sendMail'
-
+import { VerifyEmail } from '~/models/schemas/user.schemas'
 
 export const userServices = {
-
-  access_token: async (user_id?: string, numberRandom?: number) =>
-    await signJWT({ payload: { user_id: user_id, numberRandom }, privateKey: configEnv.PRIMARY_KEY, options: { expiresIn: '1h' } }),
+  access_token: async ({ user_id, time }: { user_id: string, time: string }) =>
+    await signJWT({
+      payload: { user_id: user_id },
+      privateKey: configEnv.PRIMARY_KEY,
+      options: { expiresIn: time }
+    }),
   refresh_token: async (user_id: string) =>
     await signJWT({ payload: { user_id }, privateKey: configEnv.PRIMARY_KEY, options: { expiresIn: '10h' } }),
 
   register: async (payload: Pick<userType, 'name' | 'password' | 'email' | 'date_of_birth'>) => {
-    const _id = new mongoose.Types.ObjectId
-    const [access_token, refresh_token] = await Promise.all([
-      userServices.access_token(_id.toString()),
-      userServices.refresh_token(_id.toString())
+    const _id = new mongoose.Types.ObjectId()
+
+    const [access_token, refresh_token, email_verify_token] = await Promise.all([
+      userServices.access_token({ user_id: _id.toString(), time: '1h' }),
+      userServices.refresh_token(_id.toString()),
+      userServices.access_token({ user_id: _id.toString(), time: '1h' }),
     ])
 
-    const radomNumber = Math.floor(Math.random() * (999999 - 100000) + 1) + 100000
-    const randomTokenVerifyEmail = await userServices.access_token(_id.toString(), radomNumber)
-
-    const rs = (await userModel.create({
+    const response = await userModel.create({
       ...payload,
       _id: _id,
-      email_verify_token: randomTokenVerifyEmail,
+      email_verify_token,
       password: hashPassword(payload.password)
-    })) as userType
-
+    })
     // giửi gmail xác thực
-
-
-    await sendMail({ subject: "Mã xác thực của bạn tại đây", object: radomNumber.toString() })
-
+    const link = `${configEnv.URLFE}/email_verify_token/${email_verify_token}`
+    await sendMail({ subject: 'Mã xác thực của bạn tại đây', object: email_verify_token, link })
     return {
       message: 'register successfully',
       data: {
         access_token,
-        refresh_token
+        refresh_token,
       }
     }
   },
@@ -51,8 +51,21 @@ export const userServices = {
     return Boolean(checkExist)
   },
 
-  EmailVerifyToken: async () => {
-    const response = await userModel.findOneAndUpdate()
+  EmailVerifyToken: async (user_id: string) => {
+    await userModel.findOneAndUpdate(
+      { _id: new mongoose.Types.ObjectId(user_id) },
+      {
+        $set: {
+          verify: VerifyEmail.Authenticated,
+          email_verify_token: '',
+        }
+      },
+      {
+        new: true
+      }
+    )
+    return {
+      message: 'verify_email_token successfully'
+    }
   }
-
 }

@@ -8,5 +8,5 @@ export const handleError = (err: any, req: Request, res: Response, next: NextFun
   if (err.status === HTTP_STATUS.UNPROCESSABLE_ENTITY) {
     return res.status(HTTP_STATUS.UNPROCESSABLE_ENTITY).json(omit(err, ['status']))
   }
-  return res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR || HTTP_STATUS.BAD_REQUEST).json(omit(err, ['status']))
+  return res.status(err.status || HTTP_STATUS.BAD_REQUEST).json(omit(err, ['status']))
 }

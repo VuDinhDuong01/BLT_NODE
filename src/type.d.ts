@@ -1,6 +1,11 @@
+import { Request } from "express"
 
-declare namespace express {
-  export interface Request {
-    email_verify_token ?: string;
+interface EmailTokenTypes {
+  user_id: string,
+}
+declare module 'express' {
+  interface Request {
+    email_verify_token?: EmailTokenTypes
   }
 }
+
