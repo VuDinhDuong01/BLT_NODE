@@ -7,6 +7,7 @@ import { configEnv } from '~/contants/configENV'
 import { verifyJWT } from '~/utils/jwt'
 import { userModel } from '~/models/model/user.model'
 import { hashPassword } from '~/utils/hashPassword'
+import { check } from 'express-validator'
 
 
 export const validationRegister = validate(
@@ -135,3 +136,84 @@ export const validationRefreshToken = validate(
     ['body']
   )
 )
+
+export const validationForgotPassword = validate(
+  checkSchema(
+    {
+      email: {
+        isEmpty: false,
+        isEmail: true,
+        errorMessage: 'email phải đúng định dạng',
+        custom: {
+          options: async (value, { req }) => {
+            const checkEmailExist = await userServices.checkEmailExist(req.body.email)
+            if (!checkEmailExist) {
+              throw new Error('email bạn nhập không đúng')
+            }
+            req.forgotPassword = checkEmailExist
+            return true
+          }
+        }
+      },
+
+
+    },
+    ['body']
+  )
+)
+
+export const validationForgotToken = validate(
+  checkSchema(
+    {
+      forgot_password_token: {
+        isEmpty: false,
+        errorMessage: 'mã nhập không được để trống',
+        custom: {
+          options: async (value, { req }) => {
+            const token = req.params
+            const checkToken = await userModel.findOne({
+              forgot_password_token: req.body.forgot_password_token,
+              _id: token?.forgot_password_token
+            })
+            if (!checkToken) {
+              throw new Error('mã bạn nhập không đúng')
+            }
+            req.verifyForgotPassword = checkToken
+            return true
+          }
+        }
+      },
+    },
+    ['body']
+  )
+)
+export const validationResetPassword = validate(
+  checkSchema(
+    {
+      password: {
+        isEmpty: false,
+        isLength: {
+          options: { min: 5, max: 25 },
+          errorMessage: 'Password should be at least 5 chars'
+        }
+      },
+      confirm_password: {
+        isEmpty: false,
+        isLength: {
+          options: { min: 5, max: 25 },
+          errorMessage: 'Password should be at least 5 chars'
+        },
+        custom: {
+          options: (value, { req }) => {
+            if (value !== req.body.password) {
+              throw new errorWithStatus({ message: "mật khẩu bạn nhập lại không đúng", status: 402 })
+            }
+            return true
+          }
+        }
+      }
+    },
+    ['body']
+  )
+)
+

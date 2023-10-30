@@ -110,85 +110,124 @@ paths:
                     type: string
                     example: token đã hết hạn hoặc không đúng
   /login:
-   post:
+    post:
       tags:
         - auth
       requestBody:
         description: Đăng nhập
         content:
           application/json:
-           schema:
-            type: object
-            properties:
-              email:
-                type: string
-                example: duong@gmail.com
-                description: phải nhập đúng là email
-              password:
-                type: string
-                example: 123456
-                minLength: 5
-                maxLength: 25
-                description: phải nhập tối thiểu 5 kí tự và tối đa 25 kí tự
-          
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: duong@gmail.com
+                  description: phải nhập đúng là email
+                password:
+                  type: string
+                  example: 123456
+                  minLength: 5
+                  maxLength: 25
+                  description: phải nhập tối thiểu 5 kí tự và tối đa 25 kí tự
+
       responses:
-       '200':
-        description: response 
-        content:
-          application/json:
-           schema:
-            type: object
-            properties:
-              message: 
-               type: string 
-               example: login successfully
-              data:
-               type: object
-               properties:
-                access_token:
-                  type: string 
-                  example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNjUzZTM3OTE2NmE3N2YyM2NjODZjMjQ5IiwiaWF0IjoxNjk4NTc2MjczLCJleHAiOjE2OTg1Nzk4NzN9.yyo6Y8Kxe8r9SHoS2HavjcfTTAq8o3V_DxOJV-juvhQ
-                refresh_token:
-                 type: string 
-                 example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNjUzZTM3OTE2NmE3N2YyM2NjODZjMjQ5IiwiaWF0IjoxNjk4NTc2MjczLCJleHAiOjE2OTg1Nzk4NzN9.yyo6Y8Kxe8r9SHoS2HavjcfTTAq8o3V_DxOJV-juvhQ
-                user:
-                 type: object
-                 properties:
-                  name: 
-                    type: string 
-                    example: ngocduong
-                  email:
-                   type: string 
-                   example: ngocduong@gmail.com
-                  date_of_birth:
-                   type: string 
-                   format: date
-                   example: 1996-01-01
-                  username:
-                   type: string 
-                  bio:
-                   type: string 
-                  website: 
-                   type: string 
-                  avatar:
-                   type: string 
-                  cover_photo:
-                   type: string 
-                  location: 
-                   type: string 
-                  _id:
-                   type: string 
-                   format:  ObjectID
-                   example: 653e5b5630f1766c6822d46a
-       '401':
+        "200":
+          description: response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: login successfully
+                  data:
+                    type: object
+                    properties:
+                      access_token:
+                        type: string
+                        example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNjUzZTM3OTE2NmE3N2YyM2NjODZjMjQ5IiwiaWF0IjoxNjk4NTc2MjczLCJleHAiOjE2OTg1Nzk4NzN9.yyo6Y8Kxe8r9SHoS2HavjcfTTAq8o3V_DxOJV-juvhQ
+                      refresh_token:
+                        type: string
+                        example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNjUzZTM3OTE2NmE3N2YyM2NjODZjMjQ5IiwiaWF0IjoxNjk4NTc2MjczLCJleHAiOjE2OTg1Nzk4NzN9.yyo6Y8Kxe8r9SHoS2HavjcfTTAq8o3V_DxOJV-juvhQ
+                      user:
+                        type: object
+                        properties:
+                          name:
+                            type: string
+                            example: ngocduong
+                          email:
+                            type: string
+                            example: ngocduong@gmail.com
+                          date_of_birth:
+                            type: string
+                            format: date
+                            example: 1996-01-01
+                          username:
+                            type: string
+                          bio:
+                            type: string
+                          website:
+                            type: string
+                          avatar:
+                            type: string
+                          cover_photo:
+                            type: string
+                          location:
+                            type: string
+                          _id:
+                            type: string
+                            format: ObjectID
+                            example: 653e5b5630f1766c6822d46a
+        "401":
           description: email không đúng hoặc mật khẩu không đúng
           content:
-           application/json:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: email của bạn không đúng
+  /refresh_token:
+    post:
+      tags:
+        - auth
+      requestBody:
+        description: refresh token
+        content:
+          application/json:
             schema:
-             type: object
-             properties:
-              message: 
-               type: string 
-               example: email của bạn không đúng
-       
-        
+              properties:
+                refresh_token:
+                  type: string
+                  example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNjUzZWE5YzAyM2MwODM1ZTMxMjMzMGY3IiwiaWF0IjoxNjk4NjA2MDU1LCJleHAiOjE2OTg2NDIwNTV9._UGvagSXmLjQ1HJR8FYAHcYrjkWs9oX11G60s4mbHjE
+        required: true
+      responses:
+        "200":
+          description: response refresh_token
+          content:
+            application/json:
+              schema:
+                properties:
+                  message:
+                    type: string
+                    example: refresh_token successfully
+                  data:
+                    properties:
+                      access_token:
+                        type: string
+                        example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNjUzZWE5YzAyM2MwODM1ZTMxMjMzMGY3IiwiaWF0IjoxNjk4NjA2MDU1LCJleHAiOjE2OTg2NDIwNTV9._UGvagSXmLjQ1HJR8FYAHcYrjkWs9oX11G60s4mbHjE
+                      refresh_token:
+                        type: string
+                        example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNjUzZWE5YzAyM2MwODM1ZTMxMjMzMGY3IiwiaWF0IjoxNjk4NjA2MDU1LCJleHAiOjE2OTg2NDIwNTV9._UGvagSXmLjQ1HJR8FYAHcYrjkWs9oX11G60s4mbHjE
+        "401":
+          description: error token hết hạn
+          content:
+            application/json:
+              schema:
+                properties:
+                  message:
+                    type: string
+                    example: token đã hết hạn hoặc không đúng

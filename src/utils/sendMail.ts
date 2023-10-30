@@ -17,12 +17,12 @@ const client = new SESClient({
 export const sendMail = async ({
   object,
   subject,
-  link,
+
   ReplyToAddresses = []
 }: {
   ReplyToAddresses?: []
   object: string
-  link:string 
+
   subject: string
 }) => {
   const input = {
@@ -41,10 +41,10 @@ export const sendMail = async ({
       Body: {
         Html: {
           Data: template
-            .replace('{{content}}', object)
-            .replace('{{title}}', 'Xác thực email của bạn tại đây')
-            .replace('{{titleLink}}', 'Xác Thực')
-            .replace('{{link}}', link),
+            .replace('{{content}}', object),
+          // .replace('{{title}}', 'Xác thực email của bạn tại đây')
+          // .replace('{{titleLink}}', 'Xác Thực'),
+          // .replace('{{link}}', link),
           Charset: 'UTF-8'
         }
       }

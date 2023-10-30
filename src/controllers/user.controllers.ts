@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express'
 
 import { userServices } from '~/services/user.services'
-import { EmailTokenTypes } from '~/type'
+import { EmailTokenTypes, forgotPasswordType } from '~/type'
 
 export const userControllers = {
   register: async (
@@ -42,6 +42,35 @@ export const userControllers = {
       return res.json(result)
     } catch (err) {
       console.log(err)
+    }
+  },
+  forgotPassword: async (req: Request, res: Response) => {
+    try {
+      const { _id } = req.forgotPassword as forgotPasswordType
+      const result = await userServices.forgotPassword({ _id: _id.toString() });
+      return res.json(result)
+    } catch (error) {
+      console.log(error)
+    }
+  },
+  verifyForgotPassword: async (req: Request, res: Response) => {
+    try {
+
+      const { _id } = req.verifyForgotPassword as forgotPasswordType
+      const result = await userServices.verifyForgotPassword({ _id: _id.toString() })
+      return res.json(result)
+    } catch (error) {
+      console.log(error)
+    }
+  },
+  resetPassword: async (req: Request, res: Response) => {
+    try {
+      const { user_id } = req.params
+
+      const result = await userServices.resetPassword({ user_id, password: req.body.password })
+      return res.json(result)
+    } catch (error) {
+      console.log(error)
     }
   }
 }
