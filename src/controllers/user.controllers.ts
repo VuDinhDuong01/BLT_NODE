@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express'
 
 import { userServices } from '~/services/user.services'
-import { EmailTokenTypes, forgotPasswordType } from '~/type'
+import { EmailTokenTypes, forgotPasswordType, verify_access_token } from '~/type'
 
 export const userControllers = {
   register: async (
@@ -70,6 +70,24 @@ export const userControllers = {
       return res.json(result)
     } catch (error) {
       console.log(error)
+    }
+  },
+  getMe: async (req: Request, res: Response) => {
+    try {
+      const { user_id } = req.verify_access_token as verify_access_token;
+      const response = await userServices.getMe(user_id)
+      return res.json(response)
+    } catch (err) {
+      console.log(err)
+    }
+  },
+  updateMe: async (req: Request, res: Response) => {
+    try {
+      const { user_id } = req.verify_access_token as verify_access_token;
+      const response = await userServices.updateMe({ user_id: user_id, payload: req.body })
+      return res.json(response)
+    } catch (err) {
+      console.log(err)
     }
   }
 }

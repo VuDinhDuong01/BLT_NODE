@@ -355,7 +355,6 @@ paths:
                   message:
                     type: string
                     example: reset password successfully
-                 
 
         "401":
           description: error token hết hạn
@@ -366,3 +365,118 @@ paths:
                   message:
                     type: string
                     example: token đã hết hạn hoặc không đúng
+  /getMe:
+    get:
+      tags:
+        - auth
+      responses:
+        "200":
+          description: get me
+          content:
+            application/json:
+              schema:
+                properties:
+                  message:
+                    type: string
+                    example: reset password successfully
+                  data:
+                    properties:
+                      _id:
+                        type: string
+                        format: ObjectID
+                        example: dfkdfjeire33493
+                      name:
+                        type: string
+                        example: ngọc dương
+                      email:
+                        type: string
+                        example: duong2@gmail.com
+                      bio:
+                        type: string
+                        example: xin chào
+                      website:
+                        type: string
+                        example: xin chào
+
+        "401":
+          description: error token hết hạn
+          content:
+            application/json:
+              schema:
+                properties:
+                  message:
+                    type: string
+                    example: token đã hết hạn hoặc không đúng
+  /update_me:
+    patch:
+      tags:
+        - auth
+      requestBody:
+        description: update me
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/updateMe"
+        required: true
+      security:
+        - BearerAuth: []
+      responses:
+        "200":
+          description: get me
+          content:
+            application/json:
+              schema:
+                properties:
+                  message:
+                    type: string
+                    example: reset password successfully
+                  data:
+                    properties:
+                      _id:
+                        type: string
+                        format: ObjectID
+                        example: dfkdfjeire33493
+                      name:
+                        type: string
+                        example: ngọc dương
+                      email:
+                        type: string
+                        example: duong2@gmail.com
+                      bio:
+                        type: string
+                        example: xin chào
+                      website:
+                        type: string
+                        example: xin chào
+
+        "401":
+          description: error token hết hạn
+          content:
+            application/json:
+              schema:
+                properties:
+                  message:
+                    type: string
+                    example: token đã hết hạn hoặc không đúng
+components:
+  schemas:
+    updateMe:
+      type: object
+      properties:
+        name:
+          type: string
+          example: ngọc dương
+        email:
+          type: string
+          example: duong2@gmail.com
+        bio:
+          type: string
+          example: xin chào
+        website:
+          type: string
+          example: xin chào
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

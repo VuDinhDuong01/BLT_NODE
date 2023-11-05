@@ -1,4 +1,3 @@
-
 import mongoose from 'mongoose'
 
 import { userModel } from '~/models/model/user.model'
@@ -18,7 +17,7 @@ export const userServices = {
       privateKey: configEnv.PRIMARY_KEY,
       options: { expiresIn: time }
     }),
-  refresh_token: async ({ user_id, exp }: { user_id: string, exp?: number }) => {
+  refresh_token: async ({ user_id, exp }: { user_id: string; exp?: number }) => {
     if (exp) {
       return await signJWT({ payload: { user_id: user_id, exp }, privateKey: configEnv.PRIMARY_KEY_REFRESH_TOKEN })
     }
@@ -34,8 +33,7 @@ export const userServices = {
 
     const [access_token, refresh_token] = await Promise.all([
       userServices.access_token({ user_id: _id.toString(), time: '1h' }),
-      userServices.refresh_token({ user_id: _id.toString() }),
-      //   userServices.access_token({ user_id: _id.toString(), time: '1h' })
+      userServices.refresh_token({ user_id: _id.toString() })
     ])
 
     await userModel.create({
@@ -46,14 +44,13 @@ export const userServices = {
     })
     await refreshTokenModel.create({ refresh_token })
     // giửi gmail xác thực
-    // const link = `${configEnv.URL_FE}/email_verify_token/${email_verify_token}`
     await sendMail({ subject: 'Mã xác thực của bạn tại đây', object: randomToken() })
     return {
       message: 'register successfully',
       data: {
         _id,
-        access_token,
-        refresh_token
+        access_token: access_token,
+        refresh_token: refresh_token
       }
     }
   },
@@ -92,13 +89,13 @@ export const userServices = {
     return {
       message: 'login successfully',
       data: {
-        access_token,
-        refresh_token,
+        access_token: access_token,
+        refresh_token: refresh_token,
         user: res
       }
     }
   },
-  refreshToken: async ({ user_id, exp, token }: { user_id: string, exp: number, token: string }) => {
+  refreshToken: async ({ user_id, exp, token }: { user_id: string; exp: number; token: string }) => {
     const [access_token, refresh_token] = await Promise.all([
       userServices.access_token({ user_id: user_id, time: '1h' }),
       userServices.refresh_token({ user_id: user_id, exp: exp }),
@@ -106,7 +103,7 @@ export const userServices = {
     ])
     await refreshTokenModel.create({ refresh_token })
     return {
-      message: "refresh_token successfully",
+      message: 'refresh_token successfully',
       data: {
         access_token,
         refresh_token
@@ -114,44 +111,94 @@ export const userServices = {
     }
   },
   forgotPassword: async ({ _id }: { _id: string }) => {
-    const token=randomToken() 
-    const [res,] = await Promise.all([userModel.findOneAndUpdate({ _id: new mongoose.Types.ObjectId(_id) }, {
-      $set: {
-        forgot_password_token: token
-      }
-    }, {
-      new: true
-    }).select("_id"), sendMail({ subject: 'Mã xác thực của bạn tại đây', object: token })])
+    const token = randomToken()
+    const [res] = await Promise.all([
+      userModel
+        .findOneAndUpdate(
+          { _id: new mongoose.Types.ObjectId(_id) },
+          {
+            $set: {
+              forgot_password_token: token
+            }
+          },
+          {
+            new: true
+          }
+        )
+        .select('_id'),
+      sendMail({ subject: 'Mã xác thực của bạn tại đây', object: token })
+    ])
     return {
-      message: "check email để xác nhận",
+      message: 'check email để xác nhận',
       data: res
     }
   },
   verifyForgotPassword: async ({ _id }: { _id: string }) => {
-    const res = await userModel.findOneAndUpdate({ _id: new mongoose.Types.ObjectId(_id) }, {
-      $set: {
-        forgot_password_token: ""
-      }
-    }, {
-      new: true
-    }).select("_id")
+    const res = await userModel
+      .findOneAndUpdate(
+        { _id: new mongoose.Types.ObjectId(_id) },
+        {
+          $set: {
+            forgot_password_token: ''
+          }
+        },
+        {
+          new: true
+        }
+      )
+      .select('_id')
     return {
-      message: "forgotPassword_verify_token successfully",
+      message: 'forgotPassword_verify_token successfully',
       data: res
     }
   },
-  resetPassword: async ({ user_id, password }: { user_id: string, password: string }) => {
-    const res = await userModel.findOneAndUpdate({ _id: new mongoose.Types.ObjectId(user_id) }, {
+  resetPassword: async ({ user_id, password }: { user_id: string; password: string }) => {
+    const res = await userModel.findOneAndUpdate(
+      { _id: new mongoose.Types.ObjectId(user_id) },
+      {
+        $set: {
+          password: hashPassword(password)
+        }
+      },
+      {
+        new: true
+      }
+    )
+    return {
+      message: 'reset password successfully'
+    }
+  },
+  getMe: async (user_id: string) => {
+    const result = await userModel.findOne({ _id: new mongoose.Types.ObjectId(user_id) })
+    return {
+      message: 'get me successfully',
+      data: result
+    }
+  },
+  updateMe: async ({ user_id, payload }: { user_id: string, payload: userType }) => {
+    const response = await userModel.findOneAndUpdate({
+      _id: new mongoose.Types.ObjectId(user_id)
+    }, {
       $set: {
-        password: hashPassword(password)
+        ...payload,
+        name: payload.name,
+        date_of_birth: payload.date_of_birth,
+        bio: payload.bio,
+        location: payload.location,
+        website: payload.website,
+        username: payload.username,
+        avatar: payload.avatar,
+        cover_photo: payload.cover_photo,
       }
     }, {
       new: true
-    })
+    }).select("-email_verify_token -forgot_password_token -verify -password ")
     return {
-      message: "reset password successfully"
+      message: "update me successfully",
+      data: response
+
     }
   }
 
-
+  
 }

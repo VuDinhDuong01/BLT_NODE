@@ -9,7 +9,6 @@ import { userModel } from '~/models/model/user.model'
 import { hashPassword } from '~/utils/hashPassword'
 import { check } from 'express-validator'
 
-
 export const validationRegister = validate(
   checkSchema(
     {
@@ -89,11 +88,10 @@ export const validationLogin = validate(
           options: async (value, { req }) => {
             const checkEmail = await userModel.findOne({ email: req.body.email })
             if (!checkEmail) {
-              throw new errorWithStatus({ message: "email của bạn không tồn tại", status: 401 })
-            }
-            else {
+              throw new errorWithStatus({ message: 'email của bạn không tồn tại', status: 401 })
+            } else {
               if (checkEmail.password !== hashPassword(req.body.password)) {
-                throw new errorWithStatus({ message: "bạn nhập mật khẩu  không đúng", status: 401 })
+                throw new errorWithStatus({ message: 'bạn nhập mật khẩu  không đúng', status: 401 })
               }
               return true
             }
@@ -106,12 +104,11 @@ export const validationLogin = validate(
           options: { min: 5, max: 25 },
           errorMessage: 'Password should be at least 5 chars'
         }
-      },
+      }
     },
     ['body']
   )
 )
-
 
 export const validationRefreshToken = validate(
   checkSchema(
@@ -120,18 +117,21 @@ export const validationRefreshToken = validate(
         custom: {
           options: async (value, { req }) => {
             try {
-              const verifyRefreshToken = await verifyJWT({ privateKey: configEnv.PRIMARY_KEY_REFRESH_TOKEN, payload: req.body.refresh_token })
+              const verifyRefreshToken = await verifyJWT({
+                privateKey: configEnv.PRIMARY_KEY_REFRESH_TOKEN,
+                payload: req.body.refresh_token
+              })
               req.refresh_token = verifyRefreshToken
               return true
             } catch (error) {
               throw new errorWithStatus({
-                message: "refresh_token không đúng hoặc hết hạn",
+                message: 'refresh_token không đúng hoặc hết hạn',
                 status: 401
               })
             }
           }
         }
-      },
+      }
     },
     ['body']
   )
@@ -154,9 +154,7 @@ export const validationForgotPassword = validate(
             return true
           }
         }
-      },
-
-
+      }
     },
     ['body']
   )
@@ -182,7 +180,7 @@ export const validationForgotToken = validate(
             return true
           }
         }
-      },
+      }
     },
     ['body']
   )
@@ -206,7 +204,7 @@ export const validationResetPassword = validate(
         custom: {
           options: (value, { req }) => {
             if (value !== req.body.password) {
-              throw new errorWithStatus({ message: "mật khẩu bạn nhập lại không đúng", status: 402 })
+              throw new errorWithStatus({ message: 'mật khẩu bạn nhập lại không đúng', status: 402 })
             }
             return true
           }
@@ -217,3 +215,47 @@ export const validationResetPassword = validate(
   )
 )
 
+export const validateAccessToken = validate(
+  checkSchema(
+    {
+      Authorization: {
+        custom: {
+          options: async (value, { req }) => {
+            const token = value?.split(' ')[1]
+            try {
+              const verify_token = await verifyJWT({ privateKey: configEnv.PRIMARY_KEY, payload: token })
+              req.verify_access_token = verify_token
+            } catch (err) {
+              throw new errorWithStatus({ message: 'token không đúng hoặc hết hạn', status: 401 })
+            }
+          }
+        }
+      }
+    },
+    ['headers']
+  )
+)
+export const validateDataUser = validate(
+  checkSchema({
+    name: {
+      isEmpty: false,
+      errorMessage: 'name không được để trống'
+    },
+    bio: {
+      isEmpty: false,
+      errorMessage: 'bio không được để trống'
+    },
+    website: {
+      isEmpty: false,
+      errorMessage: 'website không được để trống'
+    },
+    avatar: {
+      isEmpty: false,
+      errorMessage: 'avatar không được để trống'
+    },
+    cover_photo: {
+      isEmpty: false,
+      errorMessage: 'cover_photo không được để trống'
+    }
+  })
+)
