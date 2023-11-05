@@ -42,9 +42,6 @@ export const sendMail = async ({
         Html: {
           Data: template
             .replace('{{content}}', object),
-          // .replace('{{title}}', 'Xác thực email của bạn tại đây')
-          // .replace('{{titleLink}}', 'Xác Thực'),
-          // .replace('{{link}}', link),
           Charset: 'UTF-8'
         }
       }

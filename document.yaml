@@ -231,3 +231,138 @@ paths:
                   message:
                     type: string
                     example: token đã hết hạn hoặc không đúng
+  /forgot_password:
+    post:
+      tags:
+        - auth
+      requestBody:
+        description: forgot password
+        content:
+          application/json:
+            schema:
+              properties:
+                email:
+                  type: string
+                  example: duong@gmail.com
+        required: true
+      responses:
+        "200":
+          description: forgot_password
+          content:
+            application/json:
+              schema:
+                properties:
+                  message:
+                    type: string
+                    example: kiểm tra email để xác nhận
+                  data:
+                    properties:
+                      _id:
+                        type: string
+                        format: ObjectID
+                        example: 653ea9c023c0835e312330f7
+
+        "401":
+          description: error token hết hạn
+          content:
+            application/json:
+              schema:
+                properties:
+                  message:
+                    type: string
+                    example: token đã hết hạn hoặc không đúng
+
+  /forgot_password/{_id}:
+    post:
+      tags:
+        - auth
+      parameters:
+        - name: _id
+          in: path
+          description: token
+          required: true
+          schema:
+            type: string
+            example: 653ea9c023c0835e312330f7
+      requestBody:
+        description: check ma
+        content:
+          application/json:
+            schema:
+              properties:
+                forgot_password_token:
+                  type: string
+                  example: 123456
+        required: true
+      responses:
+        "200":
+          description: forgot_password_token
+          content:
+            application/json:
+              schema:
+                properties:
+                  message:
+                    type: string
+                    example: forgot_password successfully
+                  data:
+                    properties:
+                      _id:
+                        type: string
+                        format: ObjectID
+                        example: 653ea9c023c0835e312330f7
+
+        "401":
+          description: error token hết hạn
+          content:
+            application/json:
+              schema:
+                properties:
+                  message:
+                    type: string
+                    example: token đã hết hạn hoặc không đúng
+  /reset_password/{_id}:
+    post:
+      tags:
+        - auth
+      parameters:
+        - name: _id
+          in: path
+          description: _id
+          required: true
+          schema:
+            type: string
+            example: 653ea9c023c0835e312330f7
+      requestBody:
+        description: reset_password
+        content:
+          application/json:
+            schema:
+              properties:
+                password:
+                  type: string
+                  example: 123456
+                confirm_password:
+                  type: string
+                  example: 123456
+        required: true
+      responses:
+        "200":
+          description: reset_pasword
+          content:
+            application/json:
+              schema:
+                properties:
+                  message:
+                    type: string
+                    example: reset password successfully
+                 
+
+        "401":
+          description: error token hết hạn
+          content:
+            application/json:
+              schema:
+                properties:
+                  message:
+                    type: string
+                    example: token đã hết hạn hoặc không đúng

@@ -114,13 +114,14 @@ export const userServices = {
     }
   },
   forgotPassword: async ({ _id }: { _id: string }) => {
+    const token=randomToken() 
     const [res,] = await Promise.all([userModel.findOneAndUpdate({ _id: new mongoose.Types.ObjectId(_id) }, {
       $set: {
-        forgot_password_token: randomToken()
+        forgot_password_token: token
       }
     }, {
       new: true
-    }).select("-password -verify -forgot_password_token -email_verify_token"), sendMail({ subject: 'Mã xác thực của bạn tại đây', object: randomToken() })])
+    }).select("_id"), sendMail({ subject: 'Mã xác thực của bạn tại đây', object: token })])
     return {
       message: "check email để xác nhận",
       data: res
@@ -133,7 +134,7 @@ export const userServices = {
       }
     }, {
       new: true
-    }).select("-password -verify -email_verify_token --forgot_password_token")
+    }).select("_id")
     return {
       message: "forgotPassword_verify_token successfully",
       data: res

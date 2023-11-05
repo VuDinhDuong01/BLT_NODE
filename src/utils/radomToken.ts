@@ -1,3 +1,4 @@
-export const randomToken=()=>{
-  return  (Math.floor(Math.random() * (999999 - 100000) + 1) + 100000).toString()
+import otpGenerator from 'otp-generator'
+export const randomToken = () => {
+   return ( Math.floor(Math.random()*(999999-100000)+1)+ 100000).toString()
 }

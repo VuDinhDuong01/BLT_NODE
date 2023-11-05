@@ -66,7 +66,6 @@ export const userControllers = {
   resetPassword: async (req: Request, res: Response) => {
     try {
       const { user_id } = req.params
-
       const result = await userServices.resetPassword({ user_id, password: req.body.password })
       return res.json(result)
     } catch (error) {
