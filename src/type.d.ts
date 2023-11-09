@@ -29,3 +29,10 @@ declare module 'express' {
   }
 }
 
+interface FolloweType {
+  follower_id: ObjectId,
+  followered_id: ObjectId,
+  created_at: Date,
+  updated_at: Date
+}
+
