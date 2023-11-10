@@ -190,6 +190,43 @@ paths:
                   message:
                     type: string
                     example: email của bạn không đúng
+  /logout:
+    post:
+      tags:
+        - auth
+      requestBody:
+        description: logout
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                refresh_token:
+                  type: string
+                  example: kdfdfejrokdfjdkfj3489rudkjfffffffffff
+      responses:
+        "200":
+          description: response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: logout successfully
+
+        "401":
+          description: token không đúng hoặc đã hết hạn
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: token không đúng hoặc hết hạn
+
   /refresh_token:
     post:
       tags:
@@ -449,6 +486,69 @@ paths:
                         type: string
                         example: xin chào
 
+        "401":
+          description: error token hết hạn
+          content:
+            application/json:
+              schema:
+                properties:
+                  message:
+                    type: string
+                    example: token đã hết hạn hoặc không đúng
+  /follow/{id}:
+    post:
+      tags:
+        - auth
+      parameters:
+        - name: id
+          in: path
+          description: token
+          required: true
+          schema:
+            type: string
+            example: 653ea9c023c0835e312330f7
+      responses:
+        "200":
+          description: follower
+          content:
+            application/json:
+              schema:
+                properties:
+                  message:
+                    type: string
+                    example: follower successfully
+
+        "401":
+          description: error token hết hạn
+          content:
+            application/json:
+              schema:
+                properties:
+                  message:
+                    type: string
+                    example: token đã hết hạn hoặc không đúng
+  /unfollow/{id}:
+    post:
+      tags:
+        - auth
+      parameters:
+        - name: id
+          in: path
+          description: token
+          required: true
+          schema:
+            type: string
+            example: 653ea9c023c0835e312330f7
+      responses:
+        "200":
+          description: unfollower
+          content:
+            application/json:
+              schema:
+                properties:
+                  message:
+                    type: string
+                    example: unfollower successfully
         "401":
           description: error token hết hạn
           content:

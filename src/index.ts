@@ -22,7 +22,7 @@ const limiter = rateLimit({
 
 })
 const options = {
-  failOnErrors: true, 
+  failOnErrors: true,
   definition: {
     openapi: '3.0.0',
     info: {

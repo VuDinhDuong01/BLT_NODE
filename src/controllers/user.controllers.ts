@@ -4,10 +4,7 @@ import { userServices } from '~/services/user.services'
 import { EmailTokenTypes, forgotPasswordType, verify_access_token } from '~/type'
 
 export const userControllers = {
-  register: async (
-    req: Request,
-    res: Response
-  ) => {
+  register: async (req: Request, res: Response) => {
     try {
       const response = await userServices.register(req.body)
       return res.json(response)
@@ -18,14 +15,13 @@ export const userControllers = {
   EmailVerifyToken: async (req: Request, res: Response) => {
     try {
       const { user_id } = req.email_verify_token as EmailTokenTypes
-      const result = await userServices.EmailVerifyToken(user_id);
+      const result = await userServices.EmailVerifyToken(user_id)
       return res.json(result)
     } catch (e) {
       console.log(e)
     }
   },
   login: async (req: Request, res: Response) => {
-
     try {
       const { email } = req.body
       const result = await userServices.login(email)
@@ -44,10 +40,18 @@ export const userControllers = {
       console.log(err)
     }
   },
+  logout: async (req: Request, res: Response) => {
+    try {
+      const result = await userServices.logout({ refresh_token: req.body.refresh_token })
+      return res.json(result)
+    } catch (err) {
+      console.log(err)
+    }
+  },
   forgotPassword: async (req: Request, res: Response) => {
     try {
       const { _id } = req.forgotPassword as forgotPasswordType
-      const result = await userServices.forgotPassword({ _id: _id.toString() });
+      const result = await userServices.forgotPassword({ _id: _id.toString() })
       return res.json(result)
     } catch (error) {
       console.log(error)
@@ -55,7 +59,6 @@ export const userControllers = {
   },
   verifyForgotPassword: async (req: Request, res: Response) => {
     try {
-
       const { _id } = req.verifyForgotPassword as forgotPasswordType
       const result = await userServices.verifyForgotPassword({ _id: _id.toString() })
       return res.json(result)
@@ -74,7 +77,7 @@ export const userControllers = {
   },
   getMe: async (req: Request, res: Response) => {
     try {
-      const { user_id } = req.verify_access_token as verify_access_token;
+      const { user_id } = req.verify_access_token as verify_access_token
       const response = await userServices.getMe(user_id)
       return res.json(response)
     } catch (err) {
@@ -83,7 +86,7 @@ export const userControllers = {
   },
   updateMe: async (req: Request, res: Response) => {
     try {
-      const { user_id } = req.verify_access_token as verify_access_token;
+      const { user_id } = req.verify_access_token as verify_access_token
       const response = await userServices.updateMe({ user_id: user_id, payload: req.body })
       return res.json(response)
     } catch (err) {

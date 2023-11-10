@@ -235,27 +235,53 @@ export const validateAccessToken = validate(
     ['headers']
   )
 )
+export const validateRefreshToken = validate(
+  checkSchema(
+    {
+      refresh_token: {
+        isEmpty: false,
+        custom: {
+          options: async (value, { req }) => {
+            try {
+              const verify_refresh_token = await verifyJWT({
+                privateKey: configEnv.PRIMARY_KEY_REFRESH_TOKEN,
+                payload: req.body.refresh_token
+              })
+              req.verify_refresh_token = verify_refresh_token
+            } catch (err) {
+              throw new errorWithStatus({ message: 'refresh_token không đúng hoặc hết hạn', status: 401 })
+            }
+          }
+        }
+      }
+    },
+    ['body']
+  )
+)
 export const validateDataUser = validate(
-  checkSchema({
-    name: {
-      isEmpty: false,
-      errorMessage: 'name không được để trống'
+  checkSchema(
+    {
+      name: {
+        isEmpty: false,
+        errorMessage: 'name không được để trống'
+      },
+      bio: {
+        isEmpty: false,
+        errorMessage: 'bio không được để trống'
+      },
+      website: {
+        isEmpty: false,
+        errorMessage: 'website không được để trống'
+      },
+      avatar: {
+        isEmpty: false,
+        errorMessage: 'avatar không được để trống'
+      },
+      cover_photo: {
+        isEmpty: false,
+        errorMessage: 'cover_photo không được để trống'
+      }
     },
-    bio: {
-      isEmpty: false,
-      errorMessage: 'bio không được để trống'
-    },
-    website: {
-      isEmpty: false,
-      errorMessage: 'website không được để trống'
-    },
-    avatar: {
-      isEmpty: false,
-      errorMessage: 'avatar không được để trống'
-    },
-    cover_photo: {
-      isEmpty: false,
-      errorMessage: 'cover_photo không được để trống'
-    }
-  })
+    ['body']
+  )
 )

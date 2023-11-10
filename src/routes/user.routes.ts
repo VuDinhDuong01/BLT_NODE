@@ -1,6 +1,17 @@
-import { Router } from "express";
-import { userControllers } from "~/controllers/user.controllers";
-import { validateAccessToken, validateDataUser, validationEmailVerifyToken, validationForgotPassword, validationForgotToken, validationLogin, validationRefreshToken, validationRegister, validationResetPassword } from "~/middlewares/user.middlewares";
+import { Router } from 'express'
+import { userControllers } from '~/controllers/user.controllers'
+import {
+  validateAccessToken,
+  validateDataUser,
+  validateRefreshToken,
+  validationEmailVerifyToken,
+  validationForgotPassword,
+  validationForgotToken,
+  validationLogin,
+  validationRefreshToken,
+  validationRegister,
+  validationResetPassword
+} from '~/middlewares/user.middlewares'
 
 const route = Router()
 
@@ -13,5 +24,6 @@ route.post('/forgot_password/:forgot_password_token', validationForgotToken, use
 route.post('/reset_password/:user_id', validationResetPassword, userControllers.resetPassword)
 route.get('/me', validateAccessToken, userControllers.getMe)
 route.patch('/update_me', validateAccessToken, validateDataUser, userControllers.updateMe)
+route.post('/logout', validateAccessToken, validateRefreshToken, userControllers.logout)
 
 export default route

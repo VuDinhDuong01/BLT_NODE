@@ -110,6 +110,14 @@ export const userServices = {
       }
     }
   },
+  logout: async ({ refresh_token }: { refresh_token: string }) => {
+    const response = await refreshTokenModel.deleteOne({
+      refresh_token
+    })
+    return {
+      message: "logout successfully"
+    }
+  },
   forgotPassword: async ({ _id }: { _id: string }) => {
     const token = randomToken()
     const [res] = await Promise.all([
@@ -200,5 +208,5 @@ export const userServices = {
     }
   }
 
-  
+
 }
