@@ -1,12 +1,12 @@
 import { Request, Response, NextFunction } from 'express'
 
 import { userServices } from '~/services/user.services'
-import { EmailTokenTypes, forgotPasswordType, verify_access_token } from '~/type'
+import { EmailTokenTypes, EmailVerifyToken, forgotPasswordType, verify_access_token } from '~/type'
 
 export const userControllers = {
   register: async (req: Request, res: Response) => {
     try {
-      const response = await userServices.register(req.body)
+      const response = await userServices.register({ payload: req.body, response: res })
       return res.json(response)
     } catch (error) {
       console.log(error)
@@ -14,8 +14,9 @@ export const userControllers = {
   },
   EmailVerifyToken: async (req: Request, res: Response) => {
     try {
-      const { user_id } = req.email_verify_token as EmailTokenTypes
-      const result = await userServices.EmailVerifyToken(user_id)
+      const profile = req.email_verify_token as EmailVerifyToken
+      const result = await userServices.EmailVerifyToken(profile)
+
       return res.json(result)
     } catch (e) {
       console.log(e)

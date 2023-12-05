@@ -7,7 +7,7 @@ import { configEnv } from '~/contants/configENV'
 import { verifyJWT } from '~/utils/jwt'
 import { userModel } from '~/models/model/user.model'
 import { hashPassword } from '~/utils/hashPassword'
-import { check } from 'express-validator'
+import { RequestWithCookies } from '~/type'
 
 export const validationRegister = validate(
   checkSchema(
@@ -16,7 +16,7 @@ export const validationRegister = validate(
         isEmpty: false,
         isLength: {
           options: { min: 1, max: 255 },
-          errorMessage: 'username should be at least 8 chars'
+          errorMessage: 'Họ tên nhập chưa đúng định dạng'
         }
       },
       email: {
@@ -40,15 +40,6 @@ export const validationRegister = validate(
           options: { min: 5, max: 25 },
           errorMessage: 'Password should be at least 5 chars'
         }
-      },
-      date_of_birth: {
-        isISO8601: {
-          options: {
-            strict: true,
-            strictSeparator: true
-          }
-        },
-        errorMessage: 'ngày tháng phải đúng định dạng'
       }
     },
     ['body']
@@ -60,22 +51,27 @@ export const validationEmailVerifyToken = validate(
     {
       email_verify_token: {
         custom: {
-          options: async (value, { req }) => {
-            try {
-              const token = req.params
-              const verify_token = await verifyJWT({ privateKey: configEnv.PRIMARY_KEY, payload: token?.token })
-              req.email_verify_token = verify_token
-              return true
-            } catch (err) {
-              throw new errorWithStatus({ message: 'token đã hết hạn hoặc không đúng', status: 402 })
+          options: async (_, { req }) => {
+            const { code } = req.body
+            const profileCookie = (req as RequestWithCookies).cookies.profile
+            if (profileCookie !== undefined) {
+              if (code.toString() !== profileCookie.email_verify_token) {
+                throw new Error('Mã xác thực không đúng')
+              } else {
+                req.email_verify_token = profileCookie
+                return true;
+              }
+            }
+            else {
+                throw new Error('Mã xác thực đã hết hiệu lực')
             }
           }
         }
-      }
+      },
+
     },
-    ['params']
-  )
-)
+    ['body']
+  ))
 
 export const validationLogin = validate(
   checkSchema(

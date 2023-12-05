@@ -18,7 +18,7 @@ export const signJWT = ({ payload, privateKey, options = { algorithm: 'HS256' } 
 }
 
 export const verifyJWT = ({ privateKey, payload }: { privateKey: string, payload: string }) => {
-  return new Promise<string>((resolve, rejects) => {
+  return new Promise((resolve, rejects) => {
     jwt.verify(payload, privateKey, function (err, token) {
       if (!err) {
         resolve(token as string)

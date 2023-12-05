@@ -7,12 +7,14 @@ import fs from 'fs'
 import path from 'path'
 import YAML from 'yaml'
 import swaggerJsdoc from 'swagger-jsdoc'
-
+import cookieParser from 'cookie-parser'
 import { configEnv } from './contants/configENV'
 import route from './routes/index.routes'
 import { connectMongoose } from './models/connectDB/connectMongoose'
 import { connectRedis } from './models/connectDB/connectRedis'
 import { handleError } from './utils/handleError'
+import { checkFolderUploadImageExsis, checkFolderUploadVideoExsis } from './utils/handleUploadFile'
+
 
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
@@ -50,9 +52,13 @@ app.use(cors({
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(openapiSpecification));
 app.use(limiter)
 app.use(helmet())
+app.use(cookieParser())
 
 connectMongoose()
 connectRedis()
+
+checkFolderUploadImageExsis()
+checkFolderUploadVideoExsis()
 
 route(app)
 app.use(handleError)

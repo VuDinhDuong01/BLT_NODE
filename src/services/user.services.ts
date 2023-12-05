@@ -1,4 +1,5 @@
 import mongoose from 'mongoose'
+import { Request, Response } from 'express'
 
 import { userModel } from '~/models/model/user.model'
 import { userType } from '~/types/users.types'
@@ -6,9 +7,10 @@ import { hashPassword } from '~/utils/hashPassword'
 import { signJWT } from '~/utils/jwt'
 import { configEnv } from '~/contants/configENV'
 import { sendMail } from '~/utils/sendMail'
-import { VerifyEmail } from '~/models/schemas/user.schemas'
+// import { VerifyEmail } from '~/models/schemas/user.schemas'
 import { refreshTokenModel } from '~/models/model/refresh_token.model'
 import { randomToken } from '~/utils/radomToken'
+import { EmailVerifyToken } from '~/type'
 
 export const userServices = {
   access_token: async ({ user_id, time }: { user_id: string; time: string }) =>
@@ -28,29 +30,34 @@ export const userServices = {
     })
   },
 
-  register: async (payload: Pick<userType, 'name' | 'password' | 'email' | 'date_of_birth'>) => {
+  register: async ({
+    payload,
+    response
+  }: {
+    payload: Pick<userType, 'name' | 'password' | 'email'>
+    response: Response
+  }) => {
     const _id = new mongoose.Types.ObjectId()
+    const codeRandom = randomToken()
 
-    const [access_token, refresh_token] = await Promise.all([
-      userServices.access_token({ user_id: _id.toString(), time: '1h' }),
-      userServices.refresh_token({ user_id: _id.toString() })
-    ])
 
-    await userModel.create({
+    //  await sendMail({ subject: 'Mã xác thực của bạn tại đây', object: codeRandom })
+    const maxAge = 15 * 60 * 1000
+    const expireTime = new Date(Date.now() + maxAge)
+    const dataResponse = {
       ...payload,
       _id: _id,
-      email_verify_token: randomToken(),
-      password: hashPassword(payload.password)
-    })
-    await refreshTokenModel.create({ refresh_token })
-    // giửi gmail xác thực
-    await sendMail({ subject: 'Mã xác thực của bạn tại đây', object: randomToken() })
+      email_verify_token: codeRandom,
+      password: hashPassword(payload.password),
+    }
+
+    response.cookie('profile', dataResponse, { httpOnly: true, expires: expireTime })
+
     return {
       message: 'register successfully',
       data: {
-        _id,
-        access_token: access_token,
-        refresh_token: refresh_token
+        _id
+
       }
     }
   },
@@ -60,20 +67,17 @@ export const userServices = {
     return checkExist
   },
 
-  EmailVerifyToken: async (user_id: string) => {
-    await userModel.findOneAndUpdate(
-      { _id: new mongoose.Types.ObjectId(user_id) },
-      {
-        $set: {
-          verify: VerifyEmail.Authenticated,
-          email_verify_token: ''
-        }
-      },
-      {
-        new: true
-      }
-    )
+  EmailVerifyToken: async (profile: EmailVerifyToken) => {
+    const [access_token, refresh_token] = await Promise.all([
+      userServices.access_token({ user_id: profile._id.toString(), time: '1h' }),
+      userServices.refresh_token({ user_id: profile._id.toString() })
+    ])
+    delete profile.email_verify_token
+    await Promise.all([refreshTokenModel.create({ refresh_token }), userModel.create(profile)])
     return {
+      data: {
+        access_token, refresh_token
+      },
       message: 'verify_email_token successfully'
     }
   },
@@ -115,7 +119,7 @@ export const userServices = {
       refresh_token
     })
     return {
-      message: "logout successfully"
+      message: 'logout successfully'
     }
   },
   forgotPassword: async ({ _id }: { _id: string }) => {
@@ -141,6 +145,7 @@ export const userServices = {
       data: res
     }
   },
+
   verifyForgotPassword: async ({ _id }: { _id: string }) => {
     const res = await userModel
       .findOneAndUpdate(
@@ -183,30 +188,33 @@ export const userServices = {
       data: result
     }
   },
-  updateMe: async ({ user_id, payload }: { user_id: string, payload: userType }) => {
-    const response = await userModel.findOneAndUpdate({
-      _id: new mongoose.Types.ObjectId(user_id)
-    }, {
-      $set: {
-        ...payload,
-        name: payload.name,
-        date_of_birth: payload.date_of_birth,
-        bio: payload.bio,
-        location: payload.location,
-        website: payload.website,
-        username: payload.username,
-        avatar: payload.avatar,
-        cover_photo: payload.cover_photo,
-      }
-    }, {
-      new: true
-    }).select("-email_verify_token -forgot_password_token -verify -password ")
+  updateMe: async ({ user_id, payload }: { user_id: string; payload: userType }) => {
+    const response = await userModel
+      .findOneAndUpdate(
+        {
+          _id: new mongoose.Types.ObjectId(user_id)
+        },
+        {
+          $set: {
+            ...payload,
+            name: payload.name,
+            date_of_birth: payload.date_of_birth,
+            bio: payload.bio,
+            location: payload.location,
+            website: payload.website,
+            username: payload.username,
+            avatar: payload.avatar,
+            cover_photo: payload.cover_photo
+          }
+        },
+        {
+          new: true
+        }
+      )
+      .select('-email_verify_token -forgot_password_token -verify -password ')
     return {
-      message: "update me successfully",
+      message: 'update me successfully',
       data: response
-
     }
   }
-
-
 }

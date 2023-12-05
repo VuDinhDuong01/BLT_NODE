@@ -16,7 +16,7 @@ import {
 const route = Router()
 
 route.post('/register', validationRegister, userControllers.register)
-route.post('/email_verify_token/:token', validationEmailVerifyToken, userControllers.EmailVerifyToken)
+route.post('/email_verify_token',validationEmailVerifyToken, userControllers.EmailVerifyToken)
 route.post('/login', validationLogin, userControllers.login)
 route.post('/refresh_token', validationRefreshToken, userControllers.refresh_token)
 route.post('/forgot_password', validationForgotPassword, userControllers.forgotPassword)
