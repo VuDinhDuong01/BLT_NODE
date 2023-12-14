@@ -15,6 +15,11 @@ export const userSchema = new Schema<userType>(
     username: { type: String, default: '' },
     avatar: { type: String, default: '' },
     cover_photo: { type: String, default: '' },
+    roles:{
+      type: [String],
+      enum: ['user', 'admin', 'customer'],
+      default: ['user'],
+    },
     created_at: { type: Date, default: Date.now },
     updated_at: { type: Date, default: Date.now }
 

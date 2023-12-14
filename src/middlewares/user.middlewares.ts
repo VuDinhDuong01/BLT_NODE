@@ -63,7 +63,7 @@ export const validationEmailVerifyToken = validate(
               }
             }
             else {
-                throw new Error('Mã xác thực đã hết hiệu lực')
+              throw new Error('Mã xác thực đã hết hiệu lực')
             }
           }
         }
@@ -84,13 +84,10 @@ export const validationLogin = validate(
           options: async (value, { req }) => {
             const checkEmail = await userModel.findOne({ email: req.body.email })
             if (!checkEmail) {
-              throw new errorWithStatus({ message: 'email của bạn không tồn tại', status: 401 })
-            } else {
-              if (checkEmail.password !== hashPassword(req.body.password)) {
-                throw new errorWithStatus({ message: 'bạn nhập mật khẩu  không đúng', status: 401 })
-              }
-              return true
+              throw new Error('email của bạn không tồn tại')
             }
+            return true
+
           }
         }
       },
@@ -99,6 +96,16 @@ export const validationLogin = validate(
         isLength: {
           options: { min: 5, max: 25 },
           errorMessage: 'Password should be at least 5 chars'
+        },
+        custom: {
+          options: async (value, { req }) => {
+            const checkEmail = await userModel.findOne({ email: req.body.email })
+            if (checkEmail?.password !== hashPassword(req.body.password)) {
+              throw new Error('bạn nhập mật khẩu  không đúng')
+            }
+            return true
+
+          }
         }
       }
     },

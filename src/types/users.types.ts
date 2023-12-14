@@ -13,6 +13,7 @@ export type userType = {
   username?: string
   avatar?: string,
   cover_photo?: string
+  roles:string[] 
   updated_at?:Date,
   created_at?:Date
 }

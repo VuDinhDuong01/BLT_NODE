@@ -7,7 +7,7 @@ import { hashPassword } from '~/utils/hashPassword'
 import { signJWT } from '~/utils/jwt'
 import { configEnv } from '~/contants/configENV'
 import { sendMail } from '~/utils/sendMail'
-// import { VerifyEmail } from '~/models/schemas/user.schemas'
+//  import { VerifyEmail } from '~/models/schemas/user.schemas'
 import { refreshTokenModel } from '~/models/model/refresh_token.model'
 import { randomToken } from '~/utils/radomToken'
 import { EmailVerifyToken } from '~/type'
@@ -41,7 +41,7 @@ export const userServices = {
     const codeRandom = randomToken()
 
 
-    //  await sendMail({ subject: 'Mã xác thực của bạn tại đây', object: codeRandom })
+    await sendMail({ subject: 'Mã xác thực của bạn tại đây', object: codeRandom })
     const maxAge = 15 * 60 * 1000
     const expireTime = new Date(Date.now() + maxAge)
     const dataResponse = {
@@ -52,12 +52,10 @@ export const userServices = {
     }
 
     response.cookie('profile', dataResponse, { httpOnly: true, expires: expireTime })
-
     return {
       message: 'register successfully',
       data: {
         _id
-
       }
     }
   },
