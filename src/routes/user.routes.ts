@@ -20,7 +20,7 @@ route.post('/email_verify_token',validationEmailVerifyToken, userControllers.Ema
 route.post('/login', validationLogin, userControllers.login)
 route.post('/refresh_token', validationRefreshToken, userControllers.refresh_token)
 route.post('/forgot_password', validationForgotPassword, userControllers.forgotPassword)
-route.post('/forgot_password/:forgot_password_token', validationForgotToken, userControllers.verifyForgotPassword)
+route.post('/forgot_password/:user_id', validationForgotToken, userControllers.verifyForgotPassword)
 route.post('/reset_password/:user_id', validationResetPassword, userControllers.resetPassword)
 route.get('/me', validateAccessToken, userControllers.getMe)
 route.patch('/update_me', validateAccessToken, validateDataUser, userControllers.updateMe)

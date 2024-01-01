@@ -174,7 +174,7 @@ export const validationForgotToken = validate(
             const token = req.params
             const checkToken = await userModel.findOne({
               forgot_password_token: req.body.forgot_password_token,
-              _id: token?.forgot_password_token
+              _id: token?.user_id
             })
             if (!checkToken) {
               throw new Error('mã bạn nhập không đúng')

@@ -1,5 +1,5 @@
 import mongoose from 'mongoose'
-import { Request, Response } from 'express'
+import {  Response } from 'express'
 
 import { userModel } from '~/models/model/user.model'
 import { userType } from '~/types/users.types'
@@ -13,7 +13,7 @@ import { randomToken } from '~/utils/radomToken'
 import { EmailVerifyToken } from '~/type'
 
 export const userServices = {
-  access_token: async ({ user_id, time }: { user_id: string; time: string }) =>
+  access_token: async ({ user_id, time }: { user_id: string; time: string | number }) =>
     await signJWT({
       payload: { user_id: user_id },
       privateKey: configEnv.PRIMARY_KEY,
@@ -39,8 +39,6 @@ export const userServices = {
   }) => {
     const _id = new mongoose.Types.ObjectId()
     const codeRandom = randomToken()
-
-
     await sendMail({ subject: 'Mã xác thực của bạn tại đây', object: codeRandom })
     const maxAge = 15 * 60 * 1000
     const expireTime = new Date(Date.now() + maxAge)
@@ -67,7 +65,7 @@ export const userServices = {
 
   EmailVerifyToken: async (profile: EmailVerifyToken) => {
     const [access_token, refresh_token] = await Promise.all([
-      userServices.access_token({ user_id: profile._id.toString(), time: '1h' }),
+      userServices.access_token({ user_id: profile._id.toString(), time: 30 }),
       userServices.refresh_token({ user_id: profile._id.toString() })
     ])
     delete profile.email_verify_token
@@ -84,7 +82,7 @@ export const userServices = {
       .findOne({ email })
       .select('-password -verify -email_verify_token -forgot_password_token')) as userType
     const [access_token, refresh_token] = await Promise.all([
-      userServices.access_token({ user_id: res._id as string, time: '1h' }),
+      userServices.access_token({ user_id: res._id as string, time: 30 }),
       userServices.refresh_token({ user_id: res._id as string })
     ])
     await refreshTokenModel.create({ refresh_token })
@@ -99,7 +97,7 @@ export const userServices = {
   },
   refreshToken: async ({ user_id, exp, token }: { user_id: string; exp: number; token: string }) => {
     const [access_token, refresh_token] = await Promise.all([
-      userServices.access_token({ user_id: user_id, time: '1h' }),
+      userServices.access_token({ user_id: user_id, time: 30 }),
       userServices.refresh_token({ user_id: user_id, exp: exp }),
       await refreshTokenModel.deleteOne({ refresh_token: token })
     ])
