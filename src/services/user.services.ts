@@ -1,5 +1,5 @@
 import mongoose from 'mongoose'
-import {  Response } from 'express'
+import { Response } from 'express'
 
 import { userModel } from '~/models/model/user.model'
 import { userType } from '~/types/users.types'
@@ -11,6 +11,7 @@ import { sendMail } from '~/utils/sendMail'
 import { refreshTokenModel } from '~/models/model/refresh_token.model'
 import { randomToken } from '~/utils/radomToken'
 import { EmailVerifyToken } from '~/type'
+
 
 export const userServices = {
   access_token: async ({ user_id, time }: { user_id: string; time: string | number }) =>
@@ -46,7 +47,7 @@ export const userServices = {
       ...payload,
       _id: _id,
       email_verify_token: codeRandom,
-      password: hashPassword(payload.password),
+      password: hashPassword(payload.password)
     }
 
     response.cookie('profile', dataResponse, { httpOnly: true, expires: expireTime })
@@ -65,14 +66,15 @@ export const userServices = {
 
   EmailVerifyToken: async (profile: EmailVerifyToken) => {
     const [access_token, refresh_token] = await Promise.all([
-      userServices.access_token({ user_id: profile._id.toString(), time: 30 }),
+      userServices.access_token({ user_id: profile._id.toString(), time: '1h' }),
       userServices.refresh_token({ user_id: profile._id.toString() })
     ])
     delete profile.email_verify_token
     await Promise.all([refreshTokenModel.create({ refresh_token }), userModel.create(profile)])
     return {
       data: {
-        access_token, refresh_token
+        access_token,
+        refresh_token
       },
       message: 'verify_email_token successfully'
     }
@@ -82,7 +84,7 @@ export const userServices = {
       .findOne({ email })
       .select('-password -verify -email_verify_token -forgot_password_token')) as userType
     const [access_token, refresh_token] = await Promise.all([
-      userServices.access_token({ user_id: res._id as string, time: 30 }),
+      userServices.access_token({ user_id: res._id as string, time: '1h' }),
       userServices.refresh_token({ user_id: res._id as string })
     ])
     await refreshTokenModel.create({ refresh_token })
@@ -97,7 +99,7 @@ export const userServices = {
   },
   refreshToken: async ({ user_id, exp, token }: { user_id: string; exp: number; token: string }) => {
     const [access_token, refresh_token] = await Promise.all([
-      userServices.access_token({ user_id: user_id, time: 30 }),
+      userServices.access_token({ user_id: user_id, time: '1h' }),
       userServices.refresh_token({ user_id: user_id, exp: exp }),
       await refreshTokenModel.deleteOne({ refresh_token: token })
     ])
@@ -185,23 +187,14 @@ export const userServices = {
     }
   },
   updateMe: async ({ user_id, payload }: { user_id: string; payload: userType }) => {
+    
     const response = await userModel
       .findOneAndUpdate(
         {
           _id: new mongoose.Types.ObjectId(user_id)
         },
         {
-          $set: {
-            ...payload,
-            name: payload.name,
-            date_of_birth: payload.date_of_birth,
-            bio: payload.bio,
-            location: payload.location,
-            website: payload.website,
-            username: payload.username,
-            avatar: payload.avatar,
-            cover_photo: payload.cover_photo
-          }
+          $set: payload
         },
         {
           new: true

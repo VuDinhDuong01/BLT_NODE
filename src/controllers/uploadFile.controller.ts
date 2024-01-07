@@ -7,10 +7,12 @@ import fsPromise from 'fs/promises'
 import fs from 'fs'
 import path from 'path'
 import mime from 'mime'
+
 enum MediaType {
   IMAGE,
   VIDEO
 }
+
 export const uploadFileController = {
   uploadImage: async (req: Request, res: Response) => {
     try {
@@ -77,7 +79,6 @@ export const uploadFileController = {
       if (fs.existsSync(path.resolve('uploads/videos', newFilename))) {
         await fsPromise.unlink(filepath)
       }
-
       return res.json({
         video: (uploadVideoS3 as CompleteMultipartUploadCommandOutput).Location,
         type: MediaType.VIDEO
