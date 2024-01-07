@@ -34,6 +34,7 @@ declare module 'express' {
     forgotPassword?: forgotPasswordType
     verifyForgotPassword?: verifyForgotPassword
     verify_access_token?: verify_access_token
+    verify_refresh_token?:EmailTokenTypes
   }
 }
 

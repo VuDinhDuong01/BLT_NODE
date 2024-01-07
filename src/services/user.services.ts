@@ -7,11 +7,9 @@ import { hashPassword } from '~/utils/hashPassword'
 import { signJWT } from '~/utils/jwt'
 import { configEnv } from '~/contants/configENV'
 import { sendMail } from '~/utils/sendMail'
-//  import { VerifyEmail } from '~/models/schemas/user.schemas'
 import { refreshTokenModel } from '~/models/model/refresh_token.model'
 import { randomToken } from '~/utils/radomToken'
 import { EmailVerifyToken } from '~/type'
-
 
 export const userServices = {
   access_token: async ({ user_id, time }: { user_id: string; time: string | number }) =>
@@ -87,7 +85,7 @@ export const userServices = {
       userServices.access_token({ user_id: res._id as string, time: '1h' }),
       userServices.refresh_token({ user_id: res._id as string })
     ])
-    await refreshTokenModel.create({ refresh_token })
+    await refreshTokenModel.create({ user_id: res._id, refresh_token })
     return {
       message: 'login successfully',
       data: {
@@ -103,7 +101,7 @@ export const userServices = {
       userServices.refresh_token({ user_id: user_id, exp: exp }),
       await refreshTokenModel.deleteOne({ refresh_token: token })
     ])
-    await refreshTokenModel.create({ refresh_token })
+    await refreshTokenModel.create({ user_id: user_id, refresh_token: refresh_token })
     return {
       message: 'refresh_token successfully',
       data: {
@@ -112,12 +110,11 @@ export const userServices = {
       }
     }
   },
-  logout: async ({ refresh_token }: { refresh_token: string }) => {
-    const response = await refreshTokenModel.deleteOne({
-      refresh_token
-    })
+  logout: async ({ user_id }: { user_id: string }) => {
+    await refreshTokenModel.deleteMany({ user_id })
     return {
-      message: 'logout successfully'
+      message: 'logout successfully',
+      data: {}
     }
   },
   forgotPassword: async ({ _id }: { _id: string }) => {
@@ -176,18 +173,20 @@ export const userServices = {
       }
     )
     return {
-      message: 'reset password successfully'
+      message: 'reset password successfully',
+      data:{}
     }
   },
   getMe: async (user_id: string) => {
-    const result = await userModel.findOne({ _id: new mongoose.Types.ObjectId(user_id) })
+    const result = await userModel
+      .findOne({ _id: new mongoose.Types.ObjectId(user_id) })
+      .select('-password -forgot_password_token')
     return {
       message: 'get me successfully',
       data: result
     }
   },
   updateMe: async ({ user_id, payload }: { user_id: string; payload: userType }) => {
-    
     const response = await userModel
       .findOneAndUpdate(
         {

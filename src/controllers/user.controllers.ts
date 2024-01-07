@@ -3,7 +3,7 @@ import { Request, Response, NextFunction } from 'express'
 import { userServices } from '~/services/user.services'
 import { EmailTokenTypes, EmailVerifyToken, forgotPasswordType, verify_access_token } from '~/type'
 
-export const userControllers = {
+export const userControllers: any = {
   register: async (req: Request, res: Response) => {
     try {
       const response = await userServices.register({ payload: req.body, response: res })
@@ -43,7 +43,8 @@ export const userControllers = {
   },
   logout: async (req: Request, res: Response) => {
     try {
-      const result = await userServices.logout({ refresh_token: req.body.refresh_token })
+      const { user_id } = req.verify_refresh_token as EmailTokenTypes
+      const result = await userServices.logout({ user_id: user_id})
       return res.json(result)
     } catch (err) {
       console.log(err)
