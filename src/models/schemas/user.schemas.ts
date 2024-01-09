@@ -20,6 +20,7 @@ export const userSchema = new Schema<userType>(
       enum: ['user', 'admin', 'customer'],
       default: ['user'],
     },
+    
     created_at: { type: Date, default: Date.now },
     updated_at: { type: Date, default: Date.now }
 

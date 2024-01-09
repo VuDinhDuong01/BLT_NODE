@@ -24,6 +24,7 @@ route.post('/forgot_password/:user_id', validationForgotToken, userControllers.v
 route.post('/reset_password/:user_id', validationResetPassword, userControllers.resetPassword)
 route.get('/me', validateAccessToken, userControllers.getMe)
 route.patch('/update_me', validateAccessToken, validateDataUser, userControllers.updateMe)
+route.patch('/change_password', validateAccessToken, validateDataUser, userControllers.changePassword)
 route.post('/logout', validateAccessToken, validateRefreshToken, userControllers.logout)
 
 export default route

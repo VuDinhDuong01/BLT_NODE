@@ -101,7 +101,7 @@ export const validationLogin = validate(
           options: async (value, { req }) => {
             const checkEmail = await userModel.findOne({ email: req.body.email })
             if (checkEmail?.password !== hashPassword(req.body.password)) {
-              throw new Error('bạn nhập mật khẩu  không đúng')
+              throw new Error('bạn nhập mật khẩu không đúng')
             }
             return true
 
@@ -229,7 +229,7 @@ export const validateAccessToken = validate(
               const verify_token = await verifyJWT({ privateKey: configEnv.PRIMARY_KEY, payload: token })
               req.verify_access_token = verify_token
             } catch (err) {
-              throw new errorWithStatus({ message: 'token không đúng hoặc hết hạn', status: 401 })
+              throw new errorWithStatus({ message: 'Tokens expire', status: 401 })
             }
           }
         }
@@ -252,7 +252,7 @@ export const validateRefreshToken = validate(
               })
               req.verify_refresh_token = verify_refresh_token
             } catch (err) {
-              throw new errorWithStatus({ message: 'refresh_token không đúng hoặc hết hạn', status: 401 })
+              throw new errorWithStatus({ message: 'refresh_token expires', status: 401 })
             }
           }
         }

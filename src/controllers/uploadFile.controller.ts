@@ -7,6 +7,8 @@ import fsPromise from 'fs/promises'
 import fs from 'fs'
 import path from 'path'
 import mime from 'mime'
+import { userModel } from '~/models/model/user.model'
+import { verify_access_token } from '~/type'
 
 enum MediaType {
   IMAGE,
@@ -16,6 +18,7 @@ enum MediaType {
 export const uploadFileController = {
   uploadImage: async (req: Request, res: Response) => {
     try {
+      const { user_id } = req.verify_access_token as verify_access_token
       const file = await handleUploadFile(req)
       const fileResult = await Promise.all(
         file.map(async (image) => {
@@ -36,6 +39,12 @@ export const uploadFileController = {
               fsPromise.unlink(path.resolve('uploads/images', image.filepath))
             ])
           }
+          // await userModel.findByIdAndUpdate(
+          //   { _id: user_id },
+          //   {
+          //     $push: { 'session.ps.$[elem].d': 'gua' }
+          //   }
+          // )
           return {
             image: (uploadImageResponse as CompleteMultipartUploadCommandOutput).Location as string,
             type: MediaType.IMAGE
@@ -59,7 +68,7 @@ export const uploadFileController = {
       const videoSize = fs.statSync(videoPath).size
       const CHUNK_SIZE = 0
       const start = Number(range?.replace(/\D/g, ''))
-      const end = Math.min(start + CHUNK_SIZE, videoSize-1)
+      const end = Math.min(start + CHUNK_SIZE, videoSize - 1)
       const contentLength = end - start + 1
       const contentType = mime.getType(filepath) || 'video/*'
       const headers = {
@@ -82,11 +91,9 @@ export const uploadFileController = {
       return res.json({
         video: (uploadVideoS3 as CompleteMultipartUploadCommandOutput).Location,
         type: MediaType.VIDEO
-
       })
     } catch (error) {
       console.log(error)
     }
-
   }
 }

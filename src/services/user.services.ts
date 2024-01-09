@@ -47,7 +47,7 @@ export const userServices = {
       email_verify_token: codeRandom,
       password: hashPassword(payload.password)
     }
-
+    await  userModel.create(dataResponse)
     response.cookie('profile', dataResponse, { httpOnly: true, expires: expireTime })
     return {
       message: 'register successfully',
@@ -174,7 +174,7 @@ export const userServices = {
     )
     return {
       message: 'reset password successfully',
-      data:{}
+      data: {}
     }
   },
   getMe: async (user_id: string) => {
@@ -199,10 +199,31 @@ export const userServices = {
           new: true
         }
       )
-      .select('-email_verify_token -forgot_password_token -verify -password ')
+      .select('-email_verify_token -forgot_password_token -verify -password -avatar -cover_photo')
     return {
       message: 'update me successfully',
       data: response
+    }
+  },
+  changePassword: async ({ user_id, payload }: { user_id: string; payload: userType }) => {
+    const res = await userModel
+      .findOneAndUpdate(
+        {
+          _id: new mongoose.Types.ObjectId(user_id)
+        },
+        {
+          $set:  {
+            password: hashPassword(payload.password)
+          }
+        },
+        {
+          new: true
+        }
+      )
+      .select(' -forgot_password_token  -password')
+    return {
+      message: 'changePassword successfully',
+      data: res
     }
   }
 }

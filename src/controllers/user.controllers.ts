@@ -44,7 +44,7 @@ export const userControllers: any = {
   logout: async (req: Request, res: Response) => {
     try {
       const { user_id } = req.verify_refresh_token as EmailTokenTypes
-      const result = await userServices.logout({ user_id: user_id})
+      const result = await userServices.logout({ user_id: user_id })
       return res.json(result)
     } catch (err) {
       console.log(err)
@@ -93,6 +93,15 @@ export const userControllers: any = {
       return res.json(response)
     } catch (err) {
       console.log(err)
+    }
+  },
+  changePassword: async (req: Request, res: Response) => {
+    try {
+      const { user_id } = req.verify_access_token as verify_access_token
+      const response = await userServices.changePassword({ user_id: user_id, payload: req.body })
+      return res.json(response)
+    } catch (error: unknown) {
+      console.log(error)
     }
   }
 }
