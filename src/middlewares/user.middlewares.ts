@@ -1,6 +1,6 @@
 import { checkSchema } from 'express-validator/src/middlewares/schema'
 
-import { errorWithStatus } from '~/contants/errorMessage'
+import { errorWithStatus, errorWithStatus422 } from '~/contants/errorMessage'
 import { userServices } from '~/services/user.services'
 import { validate } from '~/utils/validation'
 import { configEnv } from '~/contants/configENV'
@@ -8,6 +8,7 @@ import { verifyJWT } from '~/utils/jwt'
 import { userModel } from '~/models/model/user.model'
 import { hashPassword } from '~/utils/hashPassword'
 import { RequestWithCookies } from '~/type'
+import { errorMonitor } from 'events'
 
 export const validationRegister = validate(
   checkSchema(
@@ -59,19 +60,18 @@ export const validationEmailVerifyToken = validate(
                 throw new Error('Mã xác thực không đúng')
               } else {
                 req.email_verify_token = profileCookie
-                return true;
+                return true
               }
-            }
-            else {
+            } else {
               throw new Error('Mã xác thực đã hết hiệu lực')
             }
           }
         }
-      },
-
+      }
     },
     ['body']
-  ))
+  )
+)
 
 export const validationLogin = validate(
   checkSchema(
@@ -87,7 +87,6 @@ export const validationLogin = validate(
               throw new Error('email của bạn không tồn tại')
             }
             return true
-
           }
         }
       },
@@ -104,7 +103,6 @@ export const validationLogin = validate(
               throw new Error('bạn nhập mật khẩu không đúng')
             }
             return true
-
           }
         }
       }
@@ -283,6 +281,30 @@ export const validateDataUser = validate(
       cover_photo: {
         isEmpty: false,
         errorMessage: 'cover_photo không được để trống'
+      }
+    },
+    ['body']
+  )
+)
+export const validateChangePassword = validate(
+  checkSchema(
+    {
+      password: {
+        isEmpty: false,
+        errorMessage: 'name không được để trống',
+        custom: {
+          options: async (value, { req }) => {
+            const checkSamePassword = await userModel.findOne({ password:hashPassword( req.body.password )})
+            if (!checkSamePassword) {
+              throw new Error('Mật khẩu bạn nhập không đúng')
+            }
+            return true
+          }
+        }
+      },
+      new_password:{
+        isEmpty: false,
+        errorMessage: 'Mật khẩu mới không được bỏ trống',
       }
     },
     ['body']

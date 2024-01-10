@@ -213,7 +213,7 @@ export const userServices = {
         },
         {
           $set:  {
-            password: hashPassword(payload.password)
+            password: hashPassword(payload.new_password as string )
           }
         },
         {

@@ -2,6 +2,7 @@ export type userType = {
   _id?: string
   name: string,
   password: string,
+  new_password?:string 
   email: string,
   date_of_birth: string,
   email_verify_token?: string
