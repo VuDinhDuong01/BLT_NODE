@@ -3,12 +3,12 @@ import { Response } from 'express'
 
 import { userModel } from '~/models/model/user.model'
 import { userType } from '~/types/users.types'
-import { hashPassword } from '~/utils/hashPassword'
+import { hashPassword } from '~/utils/hash-password'
 import { signJWT } from '~/utils/jwt'
 import { configEnv } from '~/contants/configENV'
-import { sendMail } from '~/utils/sendMail'
-import { refreshTokenModel } from '~/models/model/refresh_token.model'
-import { randomToken } from '~/utils/radomToken'
+import { sendMail } from '~/utils/send-mail'
+import { refreshTokenModel } from '~/models/model/refresh-token'
+import { randomToken } from '~/utils/random-token'
 import { EmailVerifyToken } from '~/type'
 
 export const userServices = {
@@ -47,7 +47,7 @@ export const userServices = {
       email_verify_token: codeRandom,
       password: hashPassword(payload.password)
     }
-    await  userModel.create(dataResponse)
+    await userModel.create(dataResponse)
     response.cookie('profile', dataResponse, { httpOnly: true, expires: expireTime })
     return {
       message: 'register successfully',
@@ -199,7 +199,7 @@ export const userServices = {
           new: true
         }
       )
-      .select('-email_verify_token -forgot_password_token -verify -password -avatar -cover_photo')
+      .select('-email_verify_token -forgot_password_token  -password')
     return {
       message: 'update me successfully',
       data: response
@@ -212,8 +212,8 @@ export const userServices = {
           _id: new mongoose.Types.ObjectId(user_id)
         },
         {
-          $set:  {
-            password: hashPassword(payload.new_password as string )
+          $set: {
+            password: hashPassword(payload.new_password as string)
           }
         },
         {

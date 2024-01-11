@@ -6,7 +6,7 @@ import { validate } from '~/utils/validation'
 import { configEnv } from '~/contants/configENV'
 import { verifyJWT } from '~/utils/jwt'
 import { userModel } from '~/models/model/user.model'
-import { hashPassword } from '~/utils/hashPassword'
+import { hashPassword } from '~/utils/hash-password'
 import { RequestWithCookies } from '~/type'
 import { errorMonitor } from 'events'
 
@@ -294,7 +294,7 @@ export const validateChangePassword = validate(
         errorMessage: 'name không được để trống',
         custom: {
           options: async (value, { req }) => {
-            const checkSamePassword = await userModel.findOne({ password:hashPassword( req.body.password )})
+            const checkSamePassword = await userModel.findOne({ password: hashPassword(req.body.password) })
             if (!checkSamePassword) {
               throw new Error('Mật khẩu bạn nhập không đúng')
             }
@@ -302,7 +302,7 @@ export const validateChangePassword = validate(
           }
         }
       },
-      new_password:{
+      new_password: {
         isEmpty: false,
         errorMessage: 'Mật khẩu mới không được bỏ trống',
       }

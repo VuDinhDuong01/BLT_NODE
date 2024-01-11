@@ -10,9 +10,9 @@ import swaggerJsdoc from 'swagger-jsdoc'
 import cookieParser from 'cookie-parser'
 import { configEnv } from './contants/configENV'
 import route from './routes/index.routes'
-import { connectMongoose } from './models/connectDB/connectMongoose'
-import { connectRedis } from './models/connectDB/connectRedis'
-import { handleError } from './utils/handleError'
+import { connectMongoose } from './models/connectDB/connect-mongoose'
+import { connectRedis } from './models/connectDB/connect-redis'
+import { handleError } from './utils/handle-error'
 import { checkFolderUploadImageExsis, checkFolderUploadVideoExsis } from './utils/handleUploadFile'
 
 const limiter = rateLimit({

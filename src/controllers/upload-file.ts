@@ -18,10 +18,9 @@ enum MediaType {
 export const uploadFileController = {
   uploadImage: async (req: Request, res: Response) => {
     try {
-      const { user_id } = req.verify_access_token as verify_access_token
       const file = await handleUploadFile(req)
       const fileResult = await Promise.all(
-        file.map(async (image) => {
+        file.map(async (image:any) => {
           const newFile = image.newFilename.split('.')[0]
           const fileNameImage = `${newFile}.jpg`
           await sharp(image.filepath).jpeg({
@@ -39,12 +38,6 @@ export const uploadFileController = {
               fsPromise.unlink(path.resolve('uploads/images', image.filepath))
             ])
           }
-          // await userModel.findByIdAndUpdate(
-          //   { _id: user_id },
-          //   {
-          //     $push: { 'session.ps.$[elem].d': 'gua' }
-          //   }
-          // )
           return {
             image: (uploadImageResponse as CompleteMultipartUploadCommandOutput).Location as string,
             type: MediaType.IMAGE
