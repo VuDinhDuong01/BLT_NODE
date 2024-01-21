@@ -37,9 +37,9 @@ export const validationTweet = validate(
           errorMessage: 'Dữ liệu không hợp lệ'
         }
       },
-      audienceTweet: {
+      audience: {
         isIn: {
-          options: [typeTweet],
+          options: [audienceTweet],
           errorMessage: 'Dữ liệu không hợp lệ'
         }
       },
