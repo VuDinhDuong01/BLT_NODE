@@ -5,6 +5,7 @@ import followRoute from './follower.routes'
 import uploadFileRoute from './upload-file'
 import tweetRoute from './tweet.routes'
 import bookmarkRoute from './bookmark.routes'
+import likeRoute from './like.routes'
 
 const route = (app: Application) => {
   app.use('/api/v1', userRoute)
@@ -12,6 +13,7 @@ const route = (app: Application) => {
   app.use('/api/v1', uploadFileRoute)
   app.use('/api/v1', tweetRoute)
   app.use('/api/v1', bookmarkRoute)
+  app.use('/api/v1', likeRoute)
 }
 
 export default route
