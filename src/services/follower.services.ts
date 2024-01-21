@@ -2,22 +2,22 @@ import mongoose from 'mongoose'
 import { followModel } from '~/models/model/follower.model'
 
 export const followServices = {
-  follow: async (payload: { follower: string; followered: string }) => {
+  follow: async (payload: { follower: string; following_id: string }) => {
      await followModel.create({
       follower_id: new mongoose.Types.ObjectId(payload.follower),
-      followered_id: new mongoose.Types.ObjectId(payload.followered)
+      following_id: new mongoose.Types.ObjectId(payload.following_id)
     })
     return {
       message: 'follow successfully'
     }
   },
-  unFollow: async (payload: { follower: string; followered: string }) => {
+  unFollow: async (payload: { follower: string; following_id: string }) => {
     await followModel.deleteOne({
       follower_id: new mongoose.Types.ObjectId(payload.follower),
-      followered_id: new mongoose.Types.ObjectId(payload.followered)
+      following_id: new mongoose.Types.ObjectId(payload.following_id)
     })
     return {
-      message: 'unfollower successfully'
+      message: 'unFollow successfully'
     }
   }
 }
