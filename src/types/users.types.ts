@@ -20,9 +20,9 @@ export type userType = {
 }
 
 export interface RefreshTokenType {
-  refresh_token: string,
+  refresh_token: string
   _id?: string
   user_id: string
-  updated_at?: Date,
+  updated_at?: Date
   created_at?: Date
 }

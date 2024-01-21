@@ -1,7 +1,7 @@
-import { Router } from "express";
+import { Router } from 'express'
 
-import { uploadFileController } from "~/controllers/upload-file";
-import { validateAccessToken } from "~/middlewares/user.middlewares";
+import { uploadFileController } from '~/controllers/upload-file'
+import { validateAccessToken } from '~/middlewares/user.middlewares'
 
 const route = Router()
 

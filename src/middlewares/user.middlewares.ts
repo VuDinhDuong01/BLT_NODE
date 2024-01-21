@@ -1,6 +1,6 @@
 import { checkSchema } from 'express-validator/src/middlewares/schema'
 
-import { errorWithStatus, errorWithStatus422 } from '~/contants/errorMessage'
+import { errorWithStatus } from '~/contants/errorMessage'
 import { userServices } from '~/services/user.services'
 import { validate } from '~/utils/validation'
 import { configEnv } from '~/contants/configENV'
@@ -8,7 +8,7 @@ import { verifyJWT } from '~/utils/jwt'
 import { userModel } from '~/models/model/user.model'
 import { hashPassword } from '~/utils/hash-password'
 import { RequestWithCookies } from '~/type'
-import { errorMonitor } from 'events'
+
 
 export const validationRegister = validate(
   checkSchema(

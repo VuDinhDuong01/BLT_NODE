@@ -32,12 +32,12 @@ export const uploadFileController = {
             filePath: image.filepath,
             contentType: 'image/jpeg'
           })
-          if (fs.existsSync(path.resolve('uploads/images', image.filepath))) {
-            await Promise.all([
-              fsPromise.unlink(image.filepath),
-              fsPromise.unlink(path.resolve('uploads/images', image.filepath))
-            ])
-          }
+          // if (fs.existsSync(path.resolve('uploads/images', image.filepath))) {
+          //   await Promise.all([
+          //     fsPromise.unlink(image.filepath),
+          //     fsPromise.unlink(path.resolve('uploads/images', image.filepath))
+          //   ])
+          // }
           return {
             image: (uploadImageResponse as CompleteMultipartUploadCommandOutput).Location as string,
             type: MediaType.IMAGE
