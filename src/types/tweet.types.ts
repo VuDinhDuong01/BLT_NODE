@@ -1,3 +1,5 @@
+import { ObjectId } from "mongoose"
+
 /* eslint-disable prettier/prettier */
 export enum TweetType{
   Tweet,
@@ -7,12 +9,13 @@ export enum TweetType{
 }
 
 export interface Tweet{
+  _id?:ObjectId
   type:TweetType 
   content?:string 
-  hashtags?:string[]
-  mentions?:string[]
+  hashtags?:ObjectId[]
+  mentions?:ObjectId[]
   medias?:string[]
-  user_id:string 
+  user_id:string
   audience?:TweetAudience
   guest_views?:number
   user_views?:number

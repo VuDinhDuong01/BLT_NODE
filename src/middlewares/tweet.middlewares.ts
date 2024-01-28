@@ -1,4 +1,6 @@
 import { checkSchema } from 'express-validator'
+import mongoose from 'mongoose'
+import { tweetModel } from '~/models/model/tweet.model'
 import { TweetAudience, TweetType } from '~/types/tweet.types'
 import { getKeyFromObject } from '~/utils/common'
 
@@ -13,7 +15,7 @@ export const validationTweet = validate(
         isArray: true,
         custom: {
           options: (value, { req }) => {
-            if (!value?.every((item: any) => typeof item === 'string')) {
+            if (value.length > 0 && !value?.every((item: any) => typeof item === 'string')) {
               throw new Error('Dữ liệu không hợp lệ')
             }
             return true
@@ -24,7 +26,7 @@ export const validationTweet = validate(
         isArray: true,
         custom: {
           options: (value, { req }) => {
-            if (!value?.every((item: any) => typeof item === 'string')) {
+            if (value.length > 0 && !value?.every((item: any) => typeof item === 'string')) {
               throw new Error('Dữ liệu không hợp lệ')
             }
             return true
@@ -50,5 +52,24 @@ export const validationTweet = validate(
       }
     },
     ['body']
+  )
+)
+
+export const validationTweetId = validate(
+  checkSchema(
+    {
+      tweet_id: {
+        custom: {
+          options: async (value, { req }) => {
+            const tweet = await tweetModel.findOne({ _id: new mongoose.Types.ObjectId(value) })
+            if (!tweet) {
+              throw new Error('tweet không tồn tại')
+            }
+            return true
+          }
+        }
+      }
+    },
+    ['body', 'params']
   )
 )

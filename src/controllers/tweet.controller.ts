@@ -14,11 +14,22 @@ export const TweetController = {
         audience,
         mentions,
         medias,
-        user_id
+        user_id: user_id
       })
       return res.json(response)
     } catch (error: unknown) {
       console.log(error)
     }
-  }
+  },
+  getTweetDetail: async (req: Request, res: Response) => {
+    try {
+      const { tweet_id } = req.params
+      const { user_id } = req.verify_access_token as verify_access_token
+      const response = await TweetServices.getTweetDetail({ tweet_id, user_id })
+      return res.json(response)
+    } catch (error: unknown) {
+      console.log(error)
+    }
+  },
+  getListTweet: async (req: Request, res: Response) => {}
 }
