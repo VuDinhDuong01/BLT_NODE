@@ -1,12 +1,12 @@
 import { checkSchema } from 'express-validator'
 import mongoose from 'mongoose'
 import { tweetModel } from '~/models/model/tweet.model'
-import { TweetAudience, TweetType } from '~/types/tweet.types'
+import { TweetAudience } from '~/types/tweet.types'
 import { getKeyFromObject } from '~/utils/common'
 
 import { validate } from '~/utils/validation'
 
-const typeTweet = getKeyFromObject(TweetType)
+
 const audienceTweet = getKeyFromObject(TweetAudience)
 export const validationTweet = validate(
   checkSchema(
@@ -31,12 +31,6 @@ export const validationTweet = validate(
             }
             return true
           }
-        }
-      },
-      type: {
-        isIn: {
-          options: [typeTweet],
-          errorMessage: 'Dữ liệu không hợp lệ'
         }
       },
       audience: {

@@ -7,7 +7,6 @@ import { Tweet } from '~/types/tweet.types'
 
 export const TweetServices = {
   createTweet: async ({
-    type,
     hashtags,
     content,
     audience,
@@ -36,10 +35,9 @@ export const TweetServices = {
 
       }) || []
     )
-    const idUser = arrayMentions?.map((item: any) => item._id)
+    const idUser = arrayMentions?.map((item: any) => item?._id)
 
     await tweetModel.create({
-      type,
       hashtags: idHashtags,
       content,
       audience,
@@ -150,6 +148,60 @@ export const TweetServices = {
     return {
       message: "get tweet detail successfully",
       data: tweet
+    }
+  },
+  getListTweet:async()=>{
+    const response = await tweetModel.aggregate(
+      [
+        {
+          '$lookup': {
+            'from': 'like', 
+            'localField': '_id', 
+            'foreignField': 'tweet_id', 
+            'as': 'like'
+          }
+        }, {
+          '$addFields': {
+            'like_count': {
+              '$size': '$like'
+            }
+          }
+        }, {
+          '$project': {
+            'like': 0
+          }
+        }, {
+          '$lookup': {
+            'from': 'users', 
+            'localField': 'user_id', 
+            'foreignField': '_id', 
+            'as': 'users'
+          }
+        }, {
+          '$addFields': {
+            'user': {
+              '$map': {
+                'input': '$users', 
+                'as': 'user', 
+                'in': {
+                  'name': '$$user.name', 
+                  'username': '$$user.username', 
+                  'avatar': '$$user.avatar', 
+                  'bio': '$$user.bio'
+                }
+              }
+            }
+          }
+        }, {
+          '$project': {
+            'users': 0
+          }
+        }
+      ]
+    )
+    return {
+      message: 'get list tweet successfully',
+      data: response
     }
   }
 }
