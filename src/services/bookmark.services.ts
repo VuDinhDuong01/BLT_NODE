@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import mongoose from 'mongoose'
 import { bookmarkModel } from '~/models/model/bookmark.model'
 
@@ -24,7 +25,48 @@ export const bookmarkServices = {
   },
 
   getList: async ({ user_id }: { user_id: string }) => {
-    const result = await bookmarkModel.find({ user_id: new mongoose.Types.ObjectId(user_id) })
+    const result = await bookmarkModel.aggregate(
+      [
+        {
+          '$lookup': {
+            'from': 'tweet', 
+            'localField': 'user_id', 
+            'foreignField': 'user_id', 
+            'as': 'bookmark'
+          }
+        }, {
+          '$lookup': {
+            'from': 'tweet', 
+            'localField': 'tweet_id', 
+            'foreignField': '_id', 
+            'as': 'bookmark'
+          }
+        }, {
+          '$lookup': {
+            'from': 'like', 
+            'localField': 'tweet_id', 
+            'foreignField': 'tweet_id', 
+            'as': 'like'
+          }
+        }, {
+          '$addFields': {
+            'like_count': {
+              '$size': '$like'
+            }
+          }
+        }, {
+          '$project': {
+            'like': 0, 
+            '_id': 0, 
+            'user_id': 0, 
+            'tweet_id': 0, 
+            'created_at': 0, 
+            'updated_at': 0, 
+            '__v': 0
+          }
+        }
+      ]
+    )
     return {
       message: 'get list bookmark successfully',
       data: result
