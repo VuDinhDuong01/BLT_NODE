@@ -88,7 +88,7 @@ export const TweetServices = {
           '$lookup': {
             'from': 'bookmark',
             'localField': user_id,
-            'foreignField':user_id,
+            'foreignField': user_id,
             'as': 'bookmark'
           }
         }, {
@@ -150,7 +150,7 @@ export const TweetServices = {
       data: tweet
     }
   },
-  getListTweet:async()=>{
+  getListTweet: async () => {
     const response = await tweetModel.aggregate(
       [
         {
@@ -158,17 +158,33 @@ export const TweetServices = {
             'from': 'like', 
             'localField': '_id', 
             'foreignField': 'tweet_id', 
-            'as': 'like'
+            'as': 'likes'
           }
         }, {
           '$addFields': {
             'like_count': {
-              '$size': '$like'
+              '$size': '$likes'
             }
           }
         }, {
+          '$unwind': {
+            'path': '$likes', 
+            'preserveNullAndEmptyArrays': true
+          }
+        }, {
           '$project': {
-            'like': 0
+            'content': 1, 
+            'user_id': 1, 
+            'hashtags': 1, 
+            'mentions': 1, 
+            'medias': 1, 
+            'audience': 1, 
+            'user_views': 1, 
+            'guest_views': 1, 
+            'like_count': 1, 
+            'likes': {
+              'status': '$likes.status'
+            }
           }
         }, {
           '$lookup': {
@@ -195,6 +211,35 @@ export const TweetServices = {
         }, {
           '$project': {
             'users': 0
+          }
+        }, {
+          '$lookup': {
+            'from': 'bookmark', 
+            'localField': '_id', 
+            'foreignField': 'tweet_id', 
+            'as': 'bookmark'
+          }
+        }, {
+          '$unwind': {
+            'path': '$bookmark', 
+            'preserveNullAndEmptyArrays': true
+          }
+        }, {
+          '$project': {
+            'content': 1, 
+            'user_id': 1, 
+            'hashtags': 1, 
+            'mentions': 1, 
+            'medias': 1, 
+            'audience': 1, 
+            'user_views': 1, 
+            'guest_views': 1, 
+            'likes': 1, 
+            'like_count': 1, 
+            'user': 1, 
+            'bookmark': {
+              'status': '$bookmark.status'
+            }
           }
         }
       ]

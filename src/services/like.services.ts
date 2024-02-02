@@ -6,7 +6,8 @@ export const likeServices = {
   like: async ({ user_id, tweet_id }: { user_id: string; tweet_id: string }) => {
     await likeModel.create({
       user_id: new mongoose.Types.ObjectId(user_id),
-      tweet_id: new mongoose.Types.ObjectId(tweet_id)
+      tweet_id: new mongoose.Types.ObjectId(tweet_id),
+      status: true
     })
     return {
       message: 'create like successfully',
@@ -16,7 +17,7 @@ export const likeServices = {
   unLike: async ({ user_id, tweet_id }: { user_id: string; tweet_id: string }) => {
     await likeModel.deleteOne({
       user_id: new mongoose.Types.ObjectId(user_id),
-      tweet_id: new mongoose.Types.ObjectId(tweet_id)
+      tweet_id: new mongoose.Types.ObjectId(tweet_id),
     })
     return {
       message: 'delete like successfully',

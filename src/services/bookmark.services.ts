@@ -6,7 +6,8 @@ export const bookmarkServices = {
   create: async ({ user_id, tweet_id }: { user_id: string; tweet_id: string }) => {
     await bookmarkModel.create({
       user_id: new mongoose.Types.ObjectId(user_id),
-      tweet_id: new mongoose.Types.ObjectId(tweet_id)
+      tweet_id: new mongoose.Types.ObjectId(tweet_id),
+      status:true
     })
     return {
       message: 'create bookmark successfully',
@@ -29,40 +30,90 @@ export const bookmarkServices = {
       [
         {
           '$lookup': {
-            'from': 'tweet', 
-            'localField': 'user_id', 
-            'foreignField': 'user_id', 
-            'as': 'bookmark'
-          }
-        }, {
-          '$lookup': {
-            'from': 'tweet', 
-            'localField': 'tweet_id', 
-            'foreignField': '_id', 
-            'as': 'bookmark'
-          }
-        }, {
-          '$lookup': {
             'from': 'like', 
-            'localField': 'tweet_id', 
+            'localField': '_id', 
             'foreignField': 'tweet_id', 
-            'as': 'like'
+            'as': 'likes'
           }
         }, {
           '$addFields': {
             'like_count': {
-              '$size': '$like'
+              '$size': '$likes'
+            }
+          }
+        }, {
+          '$unwind': {
+            'path': '$likes', 
+            'preserveNullAndEmptyArrays': true
+          }
+        }, {
+          '$project': {
+            'content': 1, 
+            'user_id': 1, 
+            'hashtags': 1, 
+            'mentions': 1, 
+            'medias': 1, 
+            'audience': 1, 
+            'user_views': 1, 
+            'guest_views': 1, 
+            'like_count': 1, 
+            'likes': {
+              'status': '$likes.status'
+            }
+          }
+        }, {
+          '$lookup': {
+            'from': 'users', 
+            'localField': 'user_id', 
+            'foreignField': '_id', 
+            'as': 'users'
+          }
+        }, {
+          '$addFields': {
+            'user': {
+              '$map': {
+                'input': '$users', 
+                'as': 'user', 
+                'in': {
+                  'name': '$$user.name', 
+                  'username': '$$user.username', 
+                  'avatar': '$$user.avatar', 
+                  'bio': '$$user.bio'
+                }
+              }
             }
           }
         }, {
           '$project': {
-            'like': 0, 
-            '_id': 0, 
-            'user_id': 0, 
-            'tweet_id': 0, 
-            'created_at': 0, 
-            'updated_at': 0, 
-            '__v': 0
+            'users': 0
+          }
+        }, {
+          '$lookup': {
+            'from': 'bookmark', 
+            'localField': '_id', 
+            'foreignField': 'tweet_id', 
+            'as': 'bookmark'
+          }
+        }, {
+          '$unwind': {
+            'path': '$bookmark', 
+            'preserveNullAndEmptyArrays': true
+          }
+        }, {
+          '$project': {
+            'content': 1, 
+            'user_id': 1, 
+            'hashtags': 1, 
+            'mentions': 1, 
+            'medias': 1, 
+            'audience': 1, 
+            'user_views': 1, 
+            'guest_views': 1, 
+            'likes': 1, 
+            'like_count': 1, 
+            'bookmark': {
+              'status': '$bookmark.status'
+            }
           }
         }
       ]
