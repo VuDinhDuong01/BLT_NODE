@@ -40,8 +40,7 @@ export const sendMail = async ({
       },
       Body: {
         Html: {
-          Data: template
-            .replace('{{content}}', object),
+          Data: template.replace('{{content}}', object),
           Charset: 'UTF-8'
         }
       }

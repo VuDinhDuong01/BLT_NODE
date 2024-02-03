@@ -1,33 +1,30 @@
+import { check } from 'express-validator'
 import mongoose from 'mongoose'
 
 import { commentModel } from '~/models/model/comment.model'
-
 interface CommentProps {
   user_id: string
   tweet_id: string
-  content: string
-  image?: string
-  likes?: string
-  content_replies?: string
-  image_replies?: string
+  content_comment?: string
+  image_comment?: string[]
+  like_comment?: string[]
+  user_like?: string
 }
 
 export const commentServices = {
-  create: async ({ user_id, tweet_id, content, image, content_replies, image_replies }: CommentProps) => {
-    const newUser_id = new mongoose.Types.ObjectId(user_id)
+  create: async ({ user_id, tweet_id, content_comment, image_comment}: CommentProps) => {
+    // const checkUserLike = like_comment?.includes(user_like as string)
+    // if (checkUserLike) {
+    //   like_comment?.filter(item => item !== user_like)
+    // } else {
+    //   like_comment?.push(user_like as string)
+    // }
     await commentModel.create({
-      user_id: newUser_id,
+      user_id: new mongoose.Types.ObjectId(user_id),
       tweet_id: new mongoose.Types.ObjectId(tweet_id),
-      content,
-      image,
-      likes: [newUser_id],
-      replies: [
-        {
-          content_replies: content_replies,
-          image_replies: image_replies,
-          like_replies: newUser_id
-        }
-      ]
+      content_comment,
+      image_comment,
+      // like_comment
     })
     return {
       message: 'create comment successfully',

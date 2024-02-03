@@ -1,18 +1,12 @@
 import mongoose, { ObjectId, Schema } from 'mongoose'
 
-export interface replies {
-  content_replies?: string
-  image_replies?: string
-  like_replies?: ObjectId
-}
-
 export interface CommentType {
   user_id: ObjectId
   tweet_id: ObjectId
-  content: string
-  likes?: ObjectId[]
-  replies?: replies[]
-  image?: string
+  content_comment?: string
+  // like_comment?: string[],
+  image_comment?: string[],
+  // user_like?: ObjectId,
   created_at?: Date
   updated_at?: Date
 }
@@ -23,13 +17,10 @@ export const commentSchema = new Schema<CommentType>(
   {
     user_id: { type: commentObjectID, default: '' },
     tweet_id: { type: commentObjectID, default: '' },
-    likes: { type: [commentObjectID], default: [] },
-    replies: {
-      type: [{ content_replies: String, image_replies: String, like_replies: Schema.Types.ObjectId }],
-      default: []
-    },
-    content: { type: String, default: '' },
-    image: { type: String, default: '' },
+    // like_comment: { type: [String], default: [] },
+    content_comment: { type: String, default: '' },
+    // user_like:{type:String, default:''},
+    image_comment: { type: [String], default: []},
     created_at: { type: Date, default: Date.now },
     updated_at: { type: Date, default: Date.now }
   },

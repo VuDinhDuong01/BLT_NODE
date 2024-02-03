@@ -12,10 +12,6 @@ export const validationComment = validate(
       user_id: {
         isEmpty: false,
         errorMessage: 'Trường này không được bỏ trống'
-      },
-      content: {
-        isEmpty: false,
-        errorMessage: 'content không được bỏ trống'
       }
     },
     ['body']
