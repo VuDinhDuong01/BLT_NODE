@@ -1,24 +1,22 @@
-import { check } from 'express-validator'
 import mongoose from 'mongoose'
 
 import { commentModel } from '~/models/model/comment.model'
-import { likeCommentModel } from '~/models/model/like_comment'
+import { repliesCommentModel } from '~/models/model/repliesComment.model'
+
 interface CommentProps {
   user_id: string
-  tweet_id: string
-  content_comment?: string
-  image_comment?: string[]
-  like_comment?: string[]
-  user_like?: string
+  replies_comment_id: string
+  replies_content_comment?: string
+  replies_image_comment?: string[]
 }
 
-export const commentServices = {
-  create: async ({ user_id, tweet_id, content_comment, image_comment }: CommentProps) => {
-    await commentModel.create({
+export const repliesCommentServices = {
+  create: async ({ user_id, replies_comment_id, replies_content_comment, replies_image_comment }: CommentProps) => {
+    await repliesCommentModel.create({
       user_id: new mongoose.Types.ObjectId(user_id),
-      tweet_id: new mongoose.Types.ObjectId(tweet_id),
-      content_comment,
-      image_comment,
+      replies_comment_id: new mongoose.Types.ObjectId(replies_comment_id),
+      replies_content_comment,
+      replies_image_comment
     })
     return {
       message: 'create comment successfully',
@@ -30,6 +28,7 @@ export const commentServices = {
     await commentModel.deleteOne({
       user_id: new mongoose.Types.ObjectId(user_id),
       tweet_id: new mongoose.Types.ObjectId(tweet_id)
+      
     })
     return {
       message: 'delete bookmark successfully',

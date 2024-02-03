@@ -1,7 +1,7 @@
 import mongoose, { ObjectId, Schema } from 'mongoose'
 
-export interface LikeCommentType {
-  comment_id: ObjectId
+export interface RepliesLikeCommentType {
+  replies_comment_id: ObjectId
   user_id: ObjectId
   created_at?: Date
   updated_at?: Date
@@ -9,16 +9,16 @@ export interface LikeCommentType {
 
 const commentObjectID = mongoose.Types.ObjectId
 
-const LikeCommentSchema = new Schema<LikeCommentType>(
+const RepliesLikeCommentSchema = new Schema<RepliesLikeCommentType>(
   {
-    comment_id: { type: commentObjectID, default: '' },
+    replies_comment_id: { type: commentObjectID, default: '' },
     user_id: { type: commentObjectID, default: '' },
     created_at: { type: Date, default: Date.now },
     updated_at: { type: Date, default: Date.now }
   },
   {
-    collection: 'like_comment'
+    collection: 'replies_like_comment'
   }
 )
 
-export default LikeCommentSchema
+export default RepliesLikeCommentSchema

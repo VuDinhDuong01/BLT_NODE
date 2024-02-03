@@ -1,19 +1,18 @@
 import { Request, Response } from 'express'
 
 import { commentServices } from '~/services/comment.services'
+import { repliesCommentServices } from '~/services/repliesComment.services'
 import { verify_access_token } from '~/type'
 
-export const commentController = {
+export const repliesCommentController = {
   create: async (req: Request, res: Response) => {
     try {
-      const { tweet_id, user_id, content_comment, user_like, image_comment , like_comment} = req.body
-      const response = await commentServices.create({
+      const { replies_comment_id, user_id, replies_content_comment, replies_image_comment } = req.body
+      const response = await repliesCommentServices.create({
         user_id,
-        tweet_id,
-        content_comment,
-        image_comment,
-        user_like,
-        like_comment
+        replies_comment_id,
+        replies_content_comment,
+        replies_image_comment
       })
       return res.json(response)
     } catch (error: unknown) {
