@@ -6,14 +6,12 @@ import { verify_access_token } from '~/type'
 export const commentController = {
   create: async (req: Request, res: Response) => {
     try {
-      const { tweet_id, user_id, content_comment, user_like, image_comment , like_comment} = req.body
+      const { tweet_id, user_id, content_comment, image_comment } = req.body
       const response = await commentServices.create({
         user_id,
         tweet_id,
         content_comment,
         image_comment,
-        user_like,
-        like_comment
       })
       return res.json(response)
     } catch (error: unknown) {

@@ -1,13 +1,12 @@
 import { Router } from 'express'
 
-import { commentController } from '~/controllers/comment.controller'
+
+import { repliesCommentController } from '~/controllers/repliesComment.controller'
 import { validationComment } from '~/middlewares/comment.middlewares'
 import { validateAccessToken } from '~/middlewares/user.middlewares'
 
 const route = Router()
 
-route.post('/replies_comment', validateAccessToken, commentController.create)
-route.delete('/unComment', validateAccessToken, validationComment, commentController.delete)
-route.get('/getComment', validateAccessToken, commentController.get)
+route.post('/replies_comment', validateAccessToken, repliesCommentController.create)
 
 export default route

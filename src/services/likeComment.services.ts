@@ -10,11 +10,13 @@ interface CommentProps {
 export const likeCommentServices = {
   create: async ({ user_id, comment_id }: CommentProps) => {
     const checkExist = await likeCommentModel.findOne({
-      user_id: new mongoose.Types.ObjectId(user_id)
+      user_id: new mongoose.Types.ObjectId(user_id),
+      comment_id: new mongoose.Types.ObjectId(comment_id)
     })
     if (checkExist) {
       await likeCommentModel.deleteOne({
-        user_id: new mongoose.Types.ObjectId(user_id)
+        user_id: new mongoose.Types.ObjectId(user_id),
+        comment_id: new mongoose.Types.ObjectId(comment_id)
       })
     } else {
       await likeCommentModel.create({

@@ -19,7 +19,7 @@ export const repliesCommentServices = {
       replies_image_comment
     })
     return {
-      message: 'create comment successfully',
+      message: 'create replies comment successfully',
       data: {}
     }
   },

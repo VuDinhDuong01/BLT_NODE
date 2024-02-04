@@ -8,8 +8,7 @@ interface CommentProps {
   tweet_id: string
   content_comment?: string
   image_comment?: string[]
-  like_comment?: string[]
-  user_like?: string
+ 
 }
 
 export const commentServices = {
@@ -18,7 +17,7 @@ export const commentServices = {
       user_id: new mongoose.Types.ObjectId(user_id),
       tweet_id: new mongoose.Types.ObjectId(tweet_id),
       content_comment,
-      image_comment,
+      image_comment
     })
     return {
       message: 'create comment successfully',

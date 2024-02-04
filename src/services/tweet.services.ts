@@ -5,6 +5,7 @@ import { tweetModel } from '~/models/model/tweet.model'
 import { userModel } from '~/models/model/user.model';
 import { Tweet } from '~/types/tweet.types'
 
+
 export const TweetServices = {
   createTweet: async ({
     hashtags,
@@ -27,6 +28,7 @@ export const TweetServices = {
     );
 
     const idHashtags = arrayHashTag.map(item => item._id)
+    
 
     const arrayMentions = await Promise.all(
       mentions?.map(async (mention) => {
@@ -36,6 +38,7 @@ export const TweetServices = {
       }) || []
     )
     const idUser = arrayMentions?.map((item: any) => item?._id)
+    console.log(idUser)
 
     await tweetModel.create({
       hashtags: idHashtags,
@@ -48,6 +51,26 @@ export const TweetServices = {
     return {
       message: 'create tweet successfully',
       data: {}
+    }
+  },
+  increaseViews: async ({ tweet_id, user_id }: { tweet_id: string, user_id: string }) => {
+    const inc = user_id ? { user_views: 1 } : { guest_views: 1 }
+    const result = await tweetModel.findOneAndUpdate(
+      {
+        _id: new mongoose.Types.ObjectId(tweet_id)
+      }, {
+      $inc: inc
+    }, {
+      returnDocument: 'after',
+      projection: {
+        user_views: 1,
+        guest_views: 1
+      }
+    })
+
+    return result as {
+      user_views: number,
+      guest_views: number
     }
   },
   getTweetDetail: async ({ user_id, tweet_id }: { user_id: string, tweet_id: string }) => {
@@ -145,19 +168,17 @@ export const TweetServices = {
         }
       ]
     )
-    return {
-      message: "get tweet detail successfully",
-      data: tweet
-    }
+    return   tweet
+    
   },
   getListTweet: async () => {
     const response = await tweetModel.aggregate(
       [
         {
           '$lookup': {
-            'from': 'like', 
-            'localField': '_id', 
-            'foreignField': 'tweet_id', 
+            'from': 'like',
+            'localField': '_id',
+            'foreignField': 'tweet_id',
             'as': 'likes'
           }
         }, {
@@ -168,41 +189,41 @@ export const TweetServices = {
           }
         }, {
           '$unwind': {
-            'path': '$likes', 
+            'path': '$likes',
             'preserveNullAndEmptyArrays': true
           }
         }, {
           '$project': {
-            'content': 1, 
-            'user_id': 1, 
-            'hashtags': 1, 
-            'mentions': 1, 
-            'medias': 1, 
-            'audience': 1, 
-            'user_views': 1, 
-            'guest_views': 1, 
-            'like_count': 1, 
+            'content': 1,
+            'user_id': 1,
+            'hashtags': 1,
+            'mentions': 1,
+            'medias': 1,
+            'audience': 1,
+            'user_views': 1,
+            'guest_views': 1,
+            'like_count': 1,
             'likes': {
               'status': '$likes.status'
             }
           }
         }, {
           '$lookup': {
-            'from': 'users', 
-            'localField': 'user_id', 
-            'foreignField': '_id', 
+            'from': 'users',
+            'localField': 'user_id',
+            'foreignField': '_id',
             'as': 'users'
           }
         }, {
           '$addFields': {
             'user': {
               '$map': {
-                'input': '$users', 
-                'as': 'user', 
+                'input': '$users',
+                'as': 'user',
                 'in': {
-                  'name': '$$user.name', 
-                  'username': '$$user.username', 
-                  'avatar': '$$user.avatar', 
+                  'name': '$$user.name',
+                  'username': '$$user.username',
+                  'avatar': '$$user.avatar',
                   'bio': '$$user.bio'
                 }
               }
@@ -214,29 +235,29 @@ export const TweetServices = {
           }
         }, {
           '$lookup': {
-            'from': 'bookmark', 
-            'localField': '_id', 
-            'foreignField': 'tweet_id', 
+            'from': 'bookmark',
+            'localField': '_id',
+            'foreignField': 'tweet_id',
             'as': 'bookmark'
           }
         }, {
           '$unwind': {
-            'path': '$bookmark', 
+            'path': '$bookmark',
             'preserveNullAndEmptyArrays': true
           }
         }, {
           '$project': {
-            'content': 1, 
-            'user_id': 1, 
-            'hashtags': 1, 
-            'mentions': 1, 
-            'medias': 1, 
-            'audience': 1, 
-            'user_views': 1, 
-            'guest_views': 1, 
-            'likes': 1, 
-            'like_count': 1, 
-            'user': 1, 
+            'content': 1,
+            'user_id': 1,
+            'hashtags': 1,
+            'mentions': 1,
+            'medias': 1,
+            'audience': 1,
+            'user_views': 1,
+            'guest_views': 1,
+            'likes': 1,
+            'like_count': 1,
+            'user': 1,
             'bookmark': {
               'status': '$bookmark.status'
             }
