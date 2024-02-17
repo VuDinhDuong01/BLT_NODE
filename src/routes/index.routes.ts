@@ -8,7 +8,6 @@ import bookmarkRoute from './bookmark.routes'
 import likeRoute from './like.routes'
 import commentRoute from './comment.routes'
 import likeCommentRoute from './likeComment.routes'
-import repliesLikeCommentRoute from './likeRepliesComment.routes'
 import repliesCommentRoute from './repliesComment.routes'
 const route = (app: Application) => {
   app.use('/api/v1', userRoute)
@@ -19,7 +18,6 @@ const route = (app: Application) => {
   app.use('/api/v1', likeRoute)
   app.use('/api/v1', commentRoute)
   app.use('/api/v1', likeCommentRoute)
-  app.use('/api/v1', repliesLikeCommentRoute)
   app.use('/api/v1', repliesCommentRoute)
 }
 

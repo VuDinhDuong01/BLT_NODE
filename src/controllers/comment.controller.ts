@@ -11,7 +11,7 @@ export const commentController = {
         user_id,
         tweet_id,
         content_comment,
-        image_comment,
+        image_comment
       })
       return res.json(response)
     } catch (error: unknown) {
@@ -23,7 +23,7 @@ export const commentController = {
       const { user_id } = req.verify_access_token as verify_access_token
       const response = await commentServices.delete({
         user_id: user_id,
-        tweet_id: req.body.tweet_id
+        _id: req.body._id
       })
       return res.json(response)
     } catch (error: unknown) {
@@ -33,9 +33,12 @@ export const commentController = {
   edit: async (req: Request, res: Response) => {
     try {
       const { user_id } = req.verify_access_token as verify_access_token
-      const response = await commentServices.delete({
-        user_id: user_id,
-        tweet_id: req.body.tweet_id
+      const { content_comment, image_comment, _id } = req.body
+      const response = await commentServices.edit({
+        user_id,
+        _id,
+        content_comment,
+        image_comment
       })
       return res.json(response)
     } catch (error: unknown) {
