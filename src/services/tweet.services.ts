@@ -425,6 +425,39 @@ export const TweetServices = {
           }
         },
         {
+          $lookup: {
+            from: 'bookmark',
+            localField: '_id',
+            foreignField: 'tweet_id',
+            as: 'bookmark'
+          }
+        },
+        {
+          $unwind: {
+            path: '$bookmark',
+            preserveNullAndEmptyArrays: true
+          }
+        },
+        {
+          $project: {
+            _id: 1,
+            content: 1,
+            user_id: 1,
+            mentions: 1,
+            medias: 1,
+            audience: 1,
+            user_views: 1,
+            guest_views: 1,
+            updated_at: 1,
+            created_at: 1,
+            hashtags: 1,
+            user: 1,
+            likes: 1,
+            like_count: 1,
+            bookmark: '$bookmark.status'
+          }
+        },
+        {
           $sort: {
             created_at: -1
           }
@@ -437,7 +470,7 @@ export const TweetServices = {
         }
       ]),
       tweetModel.countDocuments()
-    ]) 
+    ])
     return {
       message: 'get list tweet successfully',
       data: listTweet,
