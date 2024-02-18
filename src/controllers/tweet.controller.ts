@@ -32,8 +32,8 @@ export const TweetController = {
         guest_views: views.guest_views
       }
       return res.json({
-        message:"get detail tweet successfully",
-        data: result 
+        message: 'get detail tweet successfully',
+        data: result
       })
     } catch (error: unknown) {
       console.log(error)
@@ -41,7 +41,8 @@ export const TweetController = {
   },
   getListTweet: async (req: Request, res: Response) => {
     try {
-      const response = await TweetServices.getListTweet()
+      const { page, limit } = req.query
+      const response = await TweetServices.getListTweet({ limit: limit as string, page: page as string })
       return res.json(response)
     } catch (error: unknown) {
       console.log(error)

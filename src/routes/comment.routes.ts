@@ -9,6 +9,6 @@ const route = Router()
 route.post('/comment', validateAccessToken, validationComment, commentController.create)
 route.delete('/unComment', validateAccessToken, commentController.delete)
 route.patch('/update_comment', validateAccessToken, commentController.edit)
-route.get('/getComment', validateAccessToken, commentController.get)
+route.get('/comment', validateAccessToken, commentController.getList)
 
 export default route

@@ -45,10 +45,15 @@ export const commentController = {
       console.log(error)
     }
   },
-  get: async (req: Request, res: Response) => {
-    const { user_id } = req.verify_access_token as verify_access_token
+  getList: async (req: Request, res: Response) => {
     try {
-      const response = await commentServices.getList({ user_id })
+      const { tweet_id } = req.body
+      const { limit, page } = req.query
+      const response = await commentServices.getListCommentWithTweet({
+        tweet_id,
+        limit: limit as string,
+        page: page as string
+      })
       return res.json(response)
     } catch (error: unknown) {
       console.log(error)

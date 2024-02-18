@@ -56,13 +56,13 @@ export const repliesCommentController = {
       console.log(error)
     }
   },
-  get: async (req: Request, res: Response) => {
-    const { user_id } = req.verify_access_token as verify_access_token
-    try {
-      const response = await commentServices.getList({ user_id })
-      return res.json(response)
-    } catch (error: unknown) {
-      console.log(error)
-    }
-  }
+  // get: async (req: Request, res: Response) => {
+  //   const { user_id } = req.verify_access_token as verify_access_token
+  //   try {
+  //     const response = await commentServices.getList({ user_id })
+  //     return res.json(response)
+  //   } catch (error: unknown) {
+  //     console.log(error)
+  //   }
+  // }
 }
