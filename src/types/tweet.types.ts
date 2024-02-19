@@ -34,8 +34,9 @@ export interface TweetDetail {
   updated_at?: Date
   created_at?: Date
   user: { username: string; avatar: string; name: string }
-  likes: Like[]
+  like?: boolean
   like_count: number
+  comment_count: number
   bookmark: boolean
 }
 interface Like {

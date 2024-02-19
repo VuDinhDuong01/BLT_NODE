@@ -7,7 +7,6 @@ export const bookmarkServices = {
     await bookmarkModel.create({
       user_id: new mongoose.Types.ObjectId(user_id),
       tweet_id: new mongoose.Types.ObjectId(tweet_id),
-      status:true
     })
     return {
       message: 'create bookmark successfully',

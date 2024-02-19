@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import mongoose from 'mongoose'
 import { hashTagsModel } from '~/models/model/hashtags.model'
 import { tweetModel } from '~/models/model/tweet.model'
@@ -330,7 +331,8 @@ export const TweetServices = {
     ])
     return tweet
   },
-  getListTweet: async ({ page, limit }: { page: string; limit: string }) => {
+  getListTweet: async ({ user_id, page, limit }: { user_id: string; page: string; limit: string }) => {
+    const userId =   String( new mongoose.Types.ObjectId(user_id)) 
     const [listTweet, total_records] = await Promise.all([
       tweetModel.aggregate<GenerateType<TweetDetail[]>>([
         {
@@ -364,26 +366,6 @@ export const TweetServices = {
           $unwind: {
             path: '$user',
             preserveNullAndEmptyArrays: true
-          }
-        },
-        {
-          $project: {
-            _id: 1,
-            content: 1,
-            user_id: 1,
-            mentions: 1,
-            medias: 1,
-            audience: 1,
-            user_views: 1,
-            guest_views: 1,
-            updated_at: 1,
-            created_at: 1,
-            hashtags: 1,
-            user: {
-              username: '$user.username',
-              avatar: '$user.avatar',
-              name: '$user.name'
-            }
           }
         },
         {
@@ -433,9 +415,18 @@ export const TweetServices = {
           }
         },
         {
-          $unwind: {
-            path: '$bookmark',
-            preserveNullAndEmptyArrays: true
+          $lookup: {
+            from: 'comment',
+            localField: '_id',
+            foreignField: 'tweet_id',
+            as: 'comments'
+          }
+        },
+        {
+          $addFields: {
+            comment_count: {
+              $size: '$comments'
+            }
           }
         },
         {
@@ -451,10 +442,16 @@ export const TweetServices = {
             updated_at: 1,
             created_at: 1,
             hashtags: 1,
-            user: 1,
             likes: 1,
             like_count: 1,
-            bookmark: '$bookmark.status'
+            comment_count: 1,
+            like: '$likes.status',
+            bookmark: 1,
+            users: {
+              username: '$user.username',
+              avatar: '$user.avatar',
+              name: '$user.name'
+            }
           }
         },
         {

@@ -41,8 +41,9 @@ export const TweetController = {
   },
   getListTweet: async (req: Request, res: Response) => {
     try {
+      const { user_id } = req.verify_access_token as verify_access_token
       const { page, limit } = req.query
-      const response = await TweetServices.getListTweet({ limit: limit as string, page: page as string })
+      const response = await TweetServices.getListTweet({ user_id, limit: limit as string, page: page as string })
       return res.json(response)
     } catch (error: unknown) {
       console.log(error)
