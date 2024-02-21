@@ -411,7 +411,7 @@ export const TweetServices = {
             from: 'bookmark',
             localField: '_id',
             foreignField: 'tweet_id',
-            as: 'bookmark'
+            as: 'bookmarks'
           }
         },
         {
@@ -445,8 +445,7 @@ export const TweetServices = {
             likes: 1,
             like_count: 1,
             comment_count: 1,
-            like: '$likes.status',
-            bookmark: 1,
+            bookmarks: 1,
             users: {
               username: '$user.username',
               avatar: '$user.avatar',

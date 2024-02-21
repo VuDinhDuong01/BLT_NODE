@@ -130,7 +130,7 @@ export const commentServices = {
         {
           $lookup: {
             from: 'users',
-            localField: 'user_id',
+            localField: 'replies_comments.user_id',
             foreignField: '_id',
             as: 'user'
           }
