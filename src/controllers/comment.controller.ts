@@ -47,8 +47,7 @@ export const commentController = {
   },
   getList: async (req: Request, res: Response) => {
     try {
-      const { tweet_id } = req.body
-      const { limit, page } = req.query
+      const { tweet_id, limit, page } = req.body
       const response = await commentServices.getListCommentWithTweet({
         tweet_id,
         limit: limit as string,

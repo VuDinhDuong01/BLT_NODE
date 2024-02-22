@@ -3,6 +3,7 @@ import mongoose, { ObjectId, Schema } from 'mongoose'
 export interface LikeCommentType {
   comment_id: ObjectId
   user_id: ObjectId
+  icon: string
   created_at?: Date
   updated_at?: Date
 }
@@ -13,6 +14,7 @@ const LikeCommentSchema = new Schema<LikeCommentType>(
   {
     comment_id: { type: commentObjectID, default: '' },
     user_id: { type: commentObjectID, default: '' },
+    icon: { type: String, default: 'AiFillLike '},
     created_at: { type: Date, default: Date.now },
     updated_at: { type: Date, default: Date.now }
   },

@@ -5,10 +5,11 @@ import { likeCommentModel } from '~/models/model/like_comment'
 interface CommentProps {
   user_id: string
   comment_id: string
+  icon:string 
 }
 
 export const likeCommentServices = {
-  create: async ({ user_id, comment_id }: CommentProps) => {
+  create: async ({ user_id, comment_id ,icon}: CommentProps) => {
     const checkExist = await likeCommentModel.findOne({
       user_id: new mongoose.Types.ObjectId(user_id),
       comment_id: new mongoose.Types.ObjectId(comment_id)
@@ -21,7 +22,8 @@ export const likeCommentServices = {
     } else {
       await likeCommentModel.create({
         comment_id: new mongoose.Types.ObjectId(comment_id),
-        user_id: new mongoose.Types.ObjectId(user_id)
+        user_id: new mongoose.Types.ObjectId(user_id),
+        icon:icon
       })
     }
     return {

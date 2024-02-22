@@ -6,9 +6,9 @@ import { validateAccessToken } from '~/middlewares/user.middlewares'
 
 const route = Router()
 
-route.post('/comment', validateAccessToken, validationComment, commentController.create)
+route.post('/create_comment', validateAccessToken, validationComment, commentController.create)
 route.delete('/unComment', validateAccessToken, commentController.delete)
 route.patch('/update_comment', validateAccessToken, commentController.edit)
-route.get('/comment', validateAccessToken, commentController.getList)
+route.post('/comment', validateAccessToken, commentController.getList)
 
 export default route
