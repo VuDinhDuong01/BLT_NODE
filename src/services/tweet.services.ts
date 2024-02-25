@@ -449,7 +449,8 @@ export const TweetServices = {
             users: {
               username: '$user.username',
               avatar: '$user.avatar',
-              name: '$user.name'
+              name: '$user.name',
+              bio:'$user.bio'
             }
           }
         },

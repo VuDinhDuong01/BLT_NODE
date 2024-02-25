@@ -7,7 +7,7 @@ interface CommentProps {
   user_id: string
   replies_comment_id: string
   replies_content_comment?: string
-  replies_image_comment?: string[]
+  replies_image_comment?: string
 }
 
 export const repliesCommentServices = {
