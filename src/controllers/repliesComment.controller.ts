@@ -20,9 +20,9 @@ export const repliesCommentController = {
     }
   },
   update: async (req: Request, res: Response) => {
-    const { id, icon, replies_comment_id } = req.body
+    const { user_id, icon, replies_comment_id } = req.body
     try {
-      const response = await repliesCommentServices.update({ icon, id, replies_comment_id })
+      const response = await repliesCommentServices.update({ icon, user_id, replies_comment_id })
       return res.json(response)
     } catch (e: unknown) {
       console.log(e)

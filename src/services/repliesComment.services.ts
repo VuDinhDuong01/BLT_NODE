@@ -24,16 +24,24 @@ export const repliesCommentServices = {
       data: {}
     }
   },
-  update: async ({ replies_comment_id, id, icon }: { replies_comment_id: string; id: string; icon: string }) => {
+  update: async ({
+    replies_comment_id,
+    user_id,
+    icon
+  }: {
+    replies_comment_id: string
+    user_id: string
+    icon: string
+  }) => {
     const findRepliesComment = await repliesCommentModel.findOne({
       _id: new mongoose.Types.ObjectId(replies_comment_id)
     })
     const convertObjectIdToString = findRepliesComment?.replies_like_comments?.map((item) => {
       return {
-        id: String(item.id)
+        user_id: String(item.user_id)
       }
     })
-    const checkRepliesComment = convertObjectIdToString?.some((item) => item.id === id)
+    const checkRepliesComment = convertObjectIdToString?.some((item) => item.user_id === user_id)
     if (checkRepliesComment) {
       const res = await repliesCommentModel.findOneAndUpdate(
         {
@@ -41,7 +49,7 @@ export const repliesCommentServices = {
         },
         {
           $pull: {
-            replies_like_comments: { id: new mongoose.Types.ObjectId(id) }
+            replies_like_comments: { user_id: new mongoose.Types.ObjectId(user_id) }
           }
         },
         {
@@ -60,7 +68,7 @@ export const repliesCommentServices = {
         {
           $push: {
             replies_like_comments: {
-              id: new mongoose.Types.ObjectId(id),
+              user_id: new mongoose.Types.ObjectId(user_id),
               icon: icon
             }
           }
