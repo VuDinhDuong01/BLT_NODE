@@ -8,6 +8,6 @@ const route = Router()
 
 route.post('/bookmark', validateAccessToken, validationBookmark, bookmarkController.create)
 route.delete('/bookmark', validateAccessToken, validationBookmark, bookmarkController.delete)
-route.get('/bookmark', validateAccessToken, bookmarkController.get)
+route.get('/bookmark/:user_id', validateAccessToken, bookmarkController.get)
 
 export default route

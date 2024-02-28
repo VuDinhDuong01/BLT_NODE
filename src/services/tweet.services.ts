@@ -74,7 +74,8 @@ export const TweetServices = {
     }
   },
   getTweetDetail: async ({ user_id, tweet_id }: { user_id: string; tweet_id: string }) => {
-    const [tweet] = await tweetModel.aggregate<Tweet>([
+    const [tweet] = await tweetModel.aggregate<Tweet>(
+      [
       {
         $lookup: {
           from: 'Hashtags',
