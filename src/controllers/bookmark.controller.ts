@@ -18,10 +18,10 @@ export const bookmarkController = {
   },
   delete: async (req: Request, res: Response) => {
     try {
-      const { user_id } = req.params
+      const { user_id, tweet_id } = req.body
       const response = await bookmarkServices.delete({
         user_id: user_id,
-        tweet_id: req.body.tweet_id
+        tweet_id: tweet_id
       })
       return res.json(response)
     } catch (error: unknown) {
@@ -29,7 +29,7 @@ export const bookmarkController = {
     }
   },
   get: async (req: Request, res: Response) => {
-    const { user_id } = req.verify_access_token as verify_access_token
+    const { user_id } = req.params 
     const { page, limit } = req.query
     try {
       const response = await bookmarkServices.getList({ user_id, limit: Number(limit), page: Number(page) })

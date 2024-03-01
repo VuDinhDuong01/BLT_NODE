@@ -28,13 +28,22 @@ export const bookmarkServices = {
 
   getList: async ({ user_id, limit, page }: { user_id: string, limit: number, page: number }) => {
     const [listTweet, total_records] = await Promise.all([
-      bookmarkModel.aggregate(
+      bookmarkModel.aggregate<GenerateType<TweetDetail[]>>(
         [
           {
             '$match': {
               'user_id': new mongoose.Types.ObjectId(user_id)
             }
-          }, {
+          },
+          {
+            $lookup: {
+              from: 'bookmark',
+              localField: '_id',
+              foreignField: '_id',
+              as: 'bookmarks'
+            }
+          },
+           {
             '$lookup': {
               'from': 'tweet',
               'localField': 'tweet_id',
@@ -48,15 +57,18 @@ export const bookmarkServices = {
             }
           }, {
             '$project': {
-              '_id': 1,
+              '_id': '$tweet._id',
+              'id_bookmark':'$_id',
               'user_id': 1,
               'tweet_id': 1,
               'created_at': 1,
               'updated_at': 1,
+              'bookmarks':1,
               'tweet_ids': '$tweet._id',
               'content': '$tweet.content',
               'hashtags': '$tweet.hashtags',
               'mentions': '$tweet.mentions',
+              'medias':'$tweet.medias',
               'audience': '$tweet.audience',
               'user_view': '$tweet.user_view',
               'guest_view': '$tweet.guest_view'
@@ -135,14 +147,6 @@ export const bookmarkServices = {
           },
           {
             $lookup: {
-              from: 'bookmark',
-              localField: '_id',
-              foreignField: '_id',
-              as: 'bookmarks'
-            }
-          },
-          {
-            $lookup: {
               from: 'comment',
               localField: 'tweet_ids',
               foreignField: 'tweet_id',
@@ -183,7 +187,7 @@ export const bookmarkServices = {
           },
           {
             $sort: {
-              created_at: -1
+              created_at: 1
             }
           },
           {
