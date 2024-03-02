@@ -4,22 +4,28 @@ import { verify_access_token } from '~/type'
 export const followController = {
   follow: async (req: Request, res: Response) => {
     try {
-      const { id } = req.params
+      const { following_id } = req.body
       const { user_id } = req.verify_access_token as verify_access_token
-      const result = await followServices.follow({ following_id: id, follower: user_id })
+      const result = await followServices.follow({ following_id, follower_id: user_id })
       return res.json(result)
     } catch (err) {
       console.log(err)
     }
   },
-  unFollow: async (req: Request, res: Response) => {
+  getListUser: async (req: Request, res: Response) => {
     try {
-      const { id } = req.params
-      const { user_id } = req.verify_access_token as verify_access_token
-      const result = await followServices.unFollow({ following_id: id, follower: user_id })
+      const result = await followServices.getUser()
       return res.json(result)
-    } catch (err) {
-      console.log(err)
+    } catch (error: unknown) {
+      console.log(error)
+    }
+  },
+  getListFollow: async (req: Request, res: Response) => {
+    try {
+      const result = await followServices.getListFollow()
+      return res.json(result)
+    } catch (error: unknown) {
+      console.log(error)
     }
   }
 }

@@ -6,7 +6,8 @@ import { validateAccessToken } from '~/middlewares/user.middlewares'
 
 const route = Router()
 
-route.post('/follow/:id', validateAccessToken, validationFollow, followController.follow)
-route.post('/unFollow/:id', validateAccessToken, validationFollow, followController.unFollow)
+route.post('/follow', validateAccessToken, validationFollow, followController.follow)
+route.get('/get_user', validateAccessToken, followController.getListUser)
+route.get('/get_follow', validateAccessToken, followController.getListFollow)
 
 export default route
