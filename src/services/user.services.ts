@@ -182,9 +182,59 @@ export const userServices = {
     }
   },
   getMe: async (user_id: string) => {
-    const result = await userModel
-      .findOne({ _id: new mongoose.Types.ObjectId(user_id) })
-      .select('-password -forgot_password_token')
+    const result = await userModel.aggregate([
+      {
+        $match: {
+          _id: new mongoose.Types.ObjectId(user_id)
+        }
+      },
+      {
+        $lookup: {
+          from: 'tweet',
+          localField: '_id',
+          foreignField: 'user_id',
+          as: 'tweets'
+        }
+      },
+      {
+        $lookup: {
+          from: 'follow',
+          localField: '_id',
+          foreignField: 'following_id',
+          as: 'follower'
+        }
+      },
+      {
+        $lookup: {
+          from: 'follow',
+          localField: '_id',
+          foreignField: 'follower_id',
+          as: 'following'
+        }
+      },
+      {
+        $addFields: {
+          count_tweet: {
+            $size: '$tweets'
+          },
+          count_following: {
+            $size: '$following'
+          },
+          count_follower: {
+            $size: '$follower'
+          }
+        }
+      },
+      {
+        $project: {
+          tweets: 0,
+          follower: 0,
+          following: 0,
+          password: 0,
+          forgot_password_token: 0
+        }
+      }
+    ])
     return {
       message: 'get me successfully',
       data: result
