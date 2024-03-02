@@ -10,6 +10,10 @@ import { sendMail } from '~/utils/send-mail'
 import { refreshTokenModel } from '~/models/model/refresh-token'
 import { randomToken } from '~/utils/random-token'
 import { EmailVerifyToken } from '~/type'
+import { GenerateType } from '~/types/generate'
+import { TweetDetail } from '~/types/tweet.types'
+import { list } from 'pm2'
+import { List } from 'lodash'
 
 export const userServices = {
   access_token: async ({ user_id, time }: { user_id: string; time: string | number }) =>
@@ -224,6 +228,729 @@ export const userServices = {
     return {
       message: 'changePassword successfully',
       data: res
+    }
+  },
+  getTweetUser: async ({
+    user_id,
+    title,
+    limit,
+    page
+  }: {
+    user_id: string
+    title?: string
+    limit: string
+    page: string
+  }) => {
+    if (title === 'Posts') {
+      const [listTweet, total_records] = await Promise.all([
+        userModel.aggregate<GenerateType<TweetDetail[]>>([
+          {
+            $match: {
+              _id: new mongoose.Types.ObjectId(user_id)
+            }
+          },
+          {
+            $lookup: {
+              from: 'tweet',
+              localField: '_id',
+              foreignField: 'user_id',
+              as: 'tweet'
+            }
+          },
+          {
+            $project: {
+              _id: 0,
+              tweet: 1
+            }
+          },
+          {
+            $unwind: {
+              path: '$tweet'
+            }
+          },
+          {
+            $project: {
+              _id: '$tweet._id',
+              content: '$tweet.content',
+              user_id: '$tweet.user_id',
+              hashtags: '$tweet.hashtags',
+              mentions: '$tweet.mentions',
+              medias: '$tweet.medias',
+              audience: '$tweet.audience',
+              user_views: '$tweet.user_views',
+              guest_views: '$tweet.guest_views',
+              updated_at: '$tweet.updated_at',
+              created_at: '$tweet.created_at'
+            }
+          },
+          {
+            $lookup: {
+              from: 'Hashtags',
+              localField: 'hashtags',
+              foreignField: '_id',
+              as: 'hashtags'
+            }
+          },
+          {
+            $addFields: {
+              hashtags: {
+                $map: {
+                  input: '$hashtags',
+                  as: 'hashtag',
+                  in: '$$hashtag.name'
+                }
+              }
+            }
+          },
+          {
+            $lookup: {
+              from: 'users',
+              localField: 'user_id',
+              foreignField: '_id',
+              as: 'user'
+            }
+          },
+          {
+            $unwind: {
+              path: '$user',
+              preserveNullAndEmptyArrays: true
+            }
+          },
+          {
+            $lookup: {
+              from: 'users',
+              localField: 'mentions',
+              foreignField: '_id',
+              as: 'mentions'
+            }
+          },
+          {
+            $addFields: {
+              mentions: {
+                $map: {
+                  input: '$mentions',
+                  as: 'mention',
+                  in: {
+                    name: '$$mention.name',
+                    username: '$$mention.username',
+                    avatar: '$$mention.avatar'
+                  }
+                }
+              }
+            }
+          },
+          {
+            $lookup: {
+              from: 'like',
+              localField: '_id',
+              foreignField: 'tweet_id',
+              as: 'likes'
+            }
+          },
+          {
+            $addFields: {
+              like_count: {
+                $size: '$likes'
+              }
+            }
+          },
+          {
+            $lookup: {
+              from: 'bookmark',
+              localField: '_id',
+              foreignField: 'tweet_id',
+              as: 'bookmarks'
+            }
+          },
+          {
+            $lookup: {
+              from: 'comment',
+              localField: '_id',
+              foreignField: 'tweet_id',
+              as: 'comments'
+            }
+          },
+          {
+            $addFields: {
+              comment_count: {
+                $size: '$comments'
+              }
+            }
+          },
+          {
+            $project: {
+              _id: 1,
+              content: 1,
+              user_id: 1,
+              mentions: 1,
+              medias: 1,
+              audience: 1,
+              user_views: 1,
+              guest_views: 1,
+              updated_at: 1,
+              created_at: 1,
+              hashtags: 1,
+              likes: 1,
+              like_count: 1,
+              comment_count: 1,
+              bookmarks: 1,
+              users: {
+                username: '$user.username',
+                avatar: '$user.avatar',
+                name: '$user.name'
+              }
+            }
+          },
+          {
+            $skip: Number(limit) * (Number(page) - 1)
+          },
+          {
+            $limit: Number(limit)
+          }
+        ]),
+        userModel.aggregate<GenerateType<TweetDetail[]>>([
+          {
+            $match: {
+              _id: new mongoose.Types.ObjectId(user_id)
+            }
+          },
+          {
+            $lookup: {
+              from: 'tweet',
+              localField: '_id',
+              foreignField: 'user_id',
+              as: 'tweet'
+            }
+          },
+          {
+            $project: {
+              _id: 0,
+              tweet: 1
+            }
+          },
+          {
+            $unwind: {
+              path: '$tweet'
+            }
+          }
+        ])
+      ])
+      return {
+        message: 'get list tweet user successfully',
+        data: listTweet,
+        limit: Number(limit),
+        total_pages: Math.ceil(total_records.length / Number(limit)),
+        total_records: total_records.length,
+        current_page: Number(limit) * (Number(page) - 1)
+      }
+    } else if (title === 'Likes') {
+      const [listTweet, total_records] = await Promise.all([
+        userModel.aggregate<GenerateType<TweetDetail[]>>([
+          {
+            $match: {
+              _id: new mongoose.Types.ObjectId(user_id)
+            }
+          },
+          {
+            $lookup: {
+              from: 'like',
+              localField: '_id',
+              foreignField: 'user_id',
+              as: 'likes'
+            }
+          },
+          {
+            $unwind: {
+              path: '$likes',
+              preserveNullAndEmptyArrays: true
+            }
+          },
+          {
+            $project: {
+              _id: 0,
+              user_id: '$likes.user_id',
+              tweet_id: '$likes.tweet_id'
+            }
+          },
+          {
+            $lookup: {
+              from: 'tweet',
+              localField: 'tweet_id',
+              foreignField: '_id',
+              as: 'tweet'
+            }
+          },
+          {
+            $project: {
+              _id: 0,
+              tweet: 1
+            }
+          },
+          {
+            $unwind: {
+              path: '$tweet'
+            }
+          },
+          {
+            $project: {
+              _id: '$tweet._id',
+              content: '$tweet.content',
+              user_id: '$tweet.user_id',
+              hashtags: '$tweet.hashtags',
+              mentions: '$tweet.mentions',
+              medias: '$tweet.medias',
+              audience: '$tweet.audience',
+              user_views: '$tweet.user_views',
+              guest_views: '$tweet.guest_views',
+              updated_at: '$tweet.updated_at',
+              created_at: '$tweet.created_at'
+            }
+          },
+
+          {
+            $lookup: {
+              from: 'Hashtags',
+              localField: 'hashtags',
+              foreignField: '_id',
+              as: 'hashtags'
+            }
+          },
+          {
+            $addFields: {
+              hashtags: {
+                $map: {
+                  input: '$hashtags',
+                  as: 'hashtag',
+                  in: '$$hashtag.name'
+                }
+              }
+            }
+          },
+          {
+            $lookup: {
+              from: 'users',
+              localField: 'user_id',
+              foreignField: '_id',
+              as: 'user'
+            }
+          },
+          {
+            $unwind: {
+              path: '$user',
+              preserveNullAndEmptyArrays: true
+            }
+          },
+          {
+            $lookup: {
+              from: 'users',
+              localField: 'mentions',
+              foreignField: '_id',
+              as: 'mentions'
+            }
+          },
+          {
+            $addFields: {
+              mentions: {
+                $map: {
+                  input: '$mentions',
+                  as: 'mention',
+                  in: {
+                    name: '$$mention.name',
+                    username: '$$mention.username',
+                    avatar: '$$mention.avatar'
+                  }
+                }
+              }
+            }
+          },
+          {
+            $lookup: {
+              from: 'like',
+              localField: '_id',
+              foreignField: 'tweet_id',
+              as: 'likes'
+            }
+          },
+          {
+            $addFields: {
+              like_count: {
+                $size: '$likes'
+              }
+            }
+          },
+          {
+            $lookup: {
+              from: 'bookmark',
+              localField: '_id',
+              foreignField: 'tweet_id',
+              as: 'bookmarks'
+            }
+          },
+          {
+            $lookup: {
+              from: 'comment',
+              localField: '_id',
+              foreignField: 'tweet_id',
+              as: 'comments'
+            }
+          },
+          {
+            $addFields: {
+              comment_count: {
+                $size: '$comments'
+              }
+            }
+          },
+          {
+            $project: {
+              _id: 1,
+              content: 1,
+              user_id: 1,
+              mentions: 1,
+              medias: 1,
+              audience: 1,
+              user_views: 1,
+              guest_views: 1,
+              updated_at: 1,
+              created_at: 1,
+              hashtags: 1,
+              likes: 1,
+              like_count: 1,
+              comment_count: 1,
+              bookmarks: 1,
+              users: {
+                username: '$user.username',
+                avatar: '$user.avatar',
+                name: '$user.name'
+              }
+            }
+          },
+          {
+            $skip: Number(limit) * (Number(page) - 1)
+          },
+          {
+            $limit: Number(limit)
+          }
+        ]),
+        userModel.aggregate<GenerateType<TweetDetail[]>>([
+          {
+            $match: {
+              _id: new mongoose.Types.ObjectId(user_id)
+            }
+          },
+          {
+            $lookup: {
+              from: 'like',
+              localField: '_id',
+              foreignField: 'user_id',
+              as: 'likes'
+            }
+          },
+          {
+            $unwind: {
+              path: '$likes',
+              preserveNullAndEmptyArrays: true
+            }
+          },
+          {
+            $project: {
+              _id: 0,
+              user_id: '$likes.user_id',
+              tweet_id: '$likes.tweet_id'
+            }
+          },
+          {
+            $lookup: {
+              from: 'tweet',
+              localField: 'tweet_id',
+              foreignField: '_id',
+              as: 'tweet'
+            }
+          },
+          {
+            $project: {
+              _id: 0,
+              tweet: 1
+            }
+          },
+          {
+            $unwind: {
+              path: '$tweet'
+            }
+          }
+        ])
+      ])
+
+      return {
+        message: 'get list tweet user successfully',
+        data: listTweet,
+        limit: Number(limit),
+        total_pages: Math.ceil(total_records.length / Number(limit)),
+        total_records: total_records.length,
+        current_page: Number(limit) * (Number(page) - 1)
+      }
+    } else {
+      const [listTweet, total_records] = await Promise.all([
+        userModel.aggregate<GenerateType<TweetDetail[]>>([
+          {
+            $match: {
+              _id: new mongoose.Types.ObjectId(user_id)
+            }
+          },
+          {
+            $lookup: {
+              from: 'comment',
+              localField: '_id',
+              foreignField: 'user_id',
+              as: 'comments'
+            }
+          },
+          {
+            $unwind: {
+              path: '$comments',
+              preserveNullAndEmptyArrays: true
+            }
+          },
+          {
+            $project: {
+              _id: 0,
+              user_id: '$comments.user_id',
+              tweet_id: '$comments.tweet_id'
+            }
+          },
+          {
+            $group: {
+              _id: '$tweet_id',
+              doc: {
+                $first: '$$ROOT'
+              }
+            }
+          },
+          {
+            $project: {
+              _id: 0,
+              tweet_id: '$doc.tweet_id',
+              user_id: '$doc.user_id'
+            }
+          },
+          {
+            $lookup: {
+              from: 'tweet',
+              localField: 'tweet_id',
+              foreignField: '_id',
+              as: 'tweet'
+            }
+          },
+          {
+            $project: {
+              _id: 0,
+              tweet: 1
+            }
+          },
+          {
+            $unwind: {
+              path: '$tweet'
+            }
+          },
+          {
+            $project: {
+              _id: '$tweet._id',
+              content: '$tweet.content',
+              user_id: '$tweet.user_id',
+              hashtags: '$tweet.hashtags',
+              mentions: '$tweet.mentions',
+              medias: '$tweet.medias',
+              audience: '$tweet.audience',
+              user_views: '$tweet.user_views',
+              guest_views: '$tweet.guest_views',
+              updated_at: '$tweet.updated_at',
+              created_at: '$tweet.created_at'
+            }
+          },
+
+          {
+            $lookup: {
+              from: 'Hashtags',
+              localField: 'hashtags',
+              foreignField: '_id',
+              as: 'hashtags'
+            }
+          },
+          {
+            $addFields: {
+              hashtags: {
+                $map: {
+                  input: '$hashtags',
+                  as: 'hashtag',
+                  in: '$$hashtag.name'
+                }
+              }
+            }
+          },
+          {
+            $lookup: {
+              from: 'users',
+              localField: 'user_id',
+              foreignField: '_id',
+              as: 'user'
+            }
+          },
+          {
+            $unwind: {
+              path: '$user',
+              preserveNullAndEmptyArrays: true
+            }
+          },
+          {
+            $lookup: {
+              from: 'users',
+              localField: 'mentions',
+              foreignField: '_id',
+              as: 'mentions'
+            }
+          },
+          {
+            $addFields: {
+              mentions: {
+                $map: {
+                  input: '$mentions',
+                  as: 'mention',
+                  in: {
+                    name: '$$mention.name',
+                    username: '$$mention.username',
+                    avatar: '$$mention.avatar'
+                  }
+                }
+              }
+            }
+          },
+          {
+            $lookup: {
+              from: 'like',
+              localField: '_id',
+              foreignField: 'tweet_id',
+              as: 'likes'
+            }
+          },
+          {
+            $addFields: {
+              like_count: {
+                $size: '$likes'
+              }
+            }
+          },
+          {
+            $lookup: {
+              from: 'bookmark',
+              localField: '_id',
+              foreignField: 'tweet_id',
+              as: 'bookmarks'
+            }
+          },
+          {
+            $lookup: {
+              from: 'comment',
+              localField: '_id',
+              foreignField: 'tweet_id',
+              as: 'comments'
+            }
+          },
+          {
+            $addFields: {
+              comment_count: {
+                $size: '$comments'
+              }
+            }
+          },
+          {
+            $project: {
+              _id: 1,
+              content: 1,
+              user_id: 1,
+              mentions: 1,
+              medias: 1,
+              audience: 1,
+              user_views: 1,
+              guest_views: 1,
+              updated_at: 1,
+              created_at: 1,
+              hashtags: 1,
+              likes: 1,
+              like_count: 1,
+              comment_count: 1,
+              bookmarks: 1,
+              users: {
+                username: '$user.username',
+                avatar: '$user.avatar',
+                name: '$user.name'
+                // bio: '$user.bio',
+                // location: '$user.location',
+                // website: '$user.website',
+                // cover_photo: '$user.cover_photo',
+                // roles: '$user.roles'
+              }
+            }
+          },
+          {
+            $skip: Number(limit) * (Number(page) - 1)
+          },
+          {
+            $limit: Number(limit)
+          }
+        ]),
+        userModel.aggregate<GenerateType<TweetDetail[]>>([
+          {
+            $match: {
+              _id: new mongoose.Types.ObjectId(user_id)
+            }
+          },
+          {
+            $lookup: {
+              from: 'comment',
+              localField: '_id',
+              foreignField: 'user_id',
+              as: 'comments'
+            }
+          },
+          {
+            $unwind: {
+              path: '$comments',
+              preserveNullAndEmptyArrays: true
+            }
+          },
+          {
+            $project: {
+              _id: 0,
+              user_id: '$comments.user_id',
+              tweet_id: '$comments.tweet_id'
+            }
+          },
+          {
+            $group: {
+              _id: '$tweet_id',
+              doc: {
+                $first: '$$ROOT'
+              }
+            }
+          },
+          {
+            $project: {
+              _id: 0,
+              tweet_id: '$doc.tweet_id',
+              user_id: '$doc.user_id'
+            }
+          }
+        ])
+      ])
+
+      return {
+        message: 'get list tweet user successfully',
+        data: listTweet,
+        limit: Number(limit),
+        total_pages: Math.ceil(total_records.length / Number(limit)),
+        total_records: total_records.length,
+        current_page: Number(limit) * (Number(page) - 1)
+      }
     }
   }
 }

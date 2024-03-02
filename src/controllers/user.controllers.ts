@@ -3,7 +3,7 @@ import { Request, Response, NextFunction } from 'express'
 import { userServices } from '~/services/user.services'
 import { EmailTokenTypes, EmailVerifyToken, forgotPasswordType, verify_access_token } from '~/type'
 
-export const userControllers: any = {
+export const userControllers = {
   register: async (req: Request, res: Response) => {
     try {
       const response = await userServices.register({ payload: req.body, response: res })
@@ -79,7 +79,7 @@ export const userControllers: any = {
   },
   getMe: async (req: Request, res: Response) => {
     try {
-      const { user_id } = req.verify_access_token as verify_access_token
+      const { user_id } = req.params
       const response = await userServices.getMe(user_id)
       return res.json(response)
     } catch (err) {
@@ -100,6 +100,22 @@ export const userControllers: any = {
       const { user_id } = req.verify_access_token as verify_access_token
       const response = await userServices.changePassword({ user_id: user_id, payload: req.body })
       return res.json(response)
+    } catch (error: unknown) {
+      console.log(error)
+    }
+  },
+
+  getTweetUser: async (req: Request, res: Response) => {
+    const { user_id } = req.params
+    const { title, limit, page } = req.query
+    try {
+      const result = await userServices.getTweetUser({
+        user_id: user_id,
+        title: title as string,
+        limit: limit as string,
+        page: page as string
+      })
+      return res.json(result)
     } catch (error: unknown) {
       console.log(error)
     }

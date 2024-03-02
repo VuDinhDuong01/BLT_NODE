@@ -23,7 +23,7 @@ route.post('/refresh_token', validationRefreshToken, userControllers.refresh_tok
 route.post('/forgot_password', validationForgotPassword, userControllers.forgotPassword)
 route.post('/forgot_password/:user_id', validationForgotToken, userControllers.verifyForgotPassword)
 route.post('/reset_password/:user_id', validationResetPassword, userControllers.resetPassword)
-route.get('/me', validateAccessToken, userControllers.getMe)
+route.get('/me/:user_id', validateAccessToken, userControllers.getMe)
 route.patch('/update_me', validateAccessToken, validateDataUser, userControllers.updateMe)
 route.patch(
   '/change_password',
@@ -33,5 +33,6 @@ route.patch(
   userControllers.changePassword
 )
 route.post('/logout', validateAccessToken, validateRefreshToken, userControllers.logout)
+route.get('/get_tweet_user/:user_id', validateAccessToken, userControllers.getTweetUser)
 
 export default route
