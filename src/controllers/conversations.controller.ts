@@ -4,22 +4,7 @@ import { conversationsServices } from '~/services/conversations.services'
 import { verify_access_token } from '~/type'
 
 export const conversationsController = {
-  create: async (req: Request, res: Response) => {
-    try {
-      const { user_id } = req.verify_access_token as verify_access_token
-      const { receiver_id } = req.params
-      const { content, images } = req.body
-      const response = await conversationsServices.create({
-        sender_id: user_id,
-        receiver_id: receiver_id,
-        content,
-        images
-      })
-      return res.json(response)
-    } catch (error: unknown) {
-      console.log(error)
-    }
-  },
+
   delete: async (req: Request, res: Response) => {
     try {
       const { user_id, tweet_id } = req.body
