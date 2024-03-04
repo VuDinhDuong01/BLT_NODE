@@ -56,34 +56,34 @@ const user: any = {}
 
 io.on('connection', (socket) => {
   const user_id = socket.handshake.auth?._id
-  user[user_id] = {
-    socket_id: socket.id
+  if (user_id) {
+    user[user_id] = {
+      socket_id: socket.id
+    }
   }
-  console.log(user)
+
+  console.log('user', user)
 
   socket.on('message_private', async (data: { content: string; to: string; from: string }) => {
     try {
-      const receiver_socket_id = user[data.to].socket_id
+      const receiver_socket_id = user[data.to]?.socket_id
       socket.to(receiver_socket_id).emit('send_message', data)
       await conversationsModel.create({
         sender_id: new mongoose.Types.ObjectId(data.from),
         receiver_id: new mongoose.Types.ObjectId(data.to),
         content: data.content
       })
-
     } catch (error: unknown) {
       console.log(error)
     }
   })
   socket.on('enter_text', (data) => {
-    
-    const receiver_socket_id = user[data.to].socket_id
-    console.log(receiver_socket_id)
+    const receiver_socket_id = user[data.to]?.socket_id
     socket.to(receiver_socket_id).emit('listen_for_text_input_events', 'enter')
   })
 
   socket.on('no_enter_text', (data) => {
-    const receiver_socket_id = user[data.to].socket_id
+    const receiver_socket_id = user[data.to]?.socket_id
     socket.to(receiver_socket_id).emit('no_text_input_events', 'no_enter')
   })
   socket.on('disconnect', () => {

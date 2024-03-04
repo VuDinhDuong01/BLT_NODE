@@ -25,15 +25,15 @@ export const TweetController = {
     const { user_id } = req.verify_access_token as verify_access_token
     const views = await TweetServices.increaseViews({ user_id, tweet_id })
     try {
-      const response = await TweetServices.getTweetDetail({ tweet_id, user_id })
-      const result = {
-        ...response,
-        user_views: views.user_views,
-        guest_views: views.guest_views
-      }
+      const response = await TweetServices.getTweetDetail({ tweet_id })
+      // const result = {
+      //   ...response,
+      //   user_views: views.user_views,
+      //   guest_views: views.guest_views
+      // }
       return res.json({
         message: 'get detail tweet successfully',
-        data: result
+        data: response
       })
     } catch (error: unknown) {
       console.log(error)
