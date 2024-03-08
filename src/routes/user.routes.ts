@@ -34,5 +34,6 @@ route.patch(
 )
 route.post('/logout', validateAccessToken, validateRefreshToken, userControllers.logout)
 route.get('/get_tweet_user/:user_id', validateAccessToken, userControllers.getTweetUser)
+route.get('/get_search_user', validateAccessToken, userControllers.getSearchUser)
 
 export default route

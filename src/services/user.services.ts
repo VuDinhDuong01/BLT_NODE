@@ -493,7 +493,7 @@ export const userServices = {
         total_records: total_records.length,
         current_page: Number(limit) * (Number(page) - 1)
       }
-    } else if (title === 'Likes') {
+    } else if (title === 'Like') {
       const [listTweet, total_records] = await Promise.all([
         userModel.aggregate<GenerateType<TweetDetail[]>>([
           {
@@ -1001,6 +1001,13 @@ export const userServices = {
         total_records: total_records.length,
         current_page: Number(limit) * (Number(page) - 1)
       }
+    }
+  },
+  searchUser: async ({ user_search }: { user_search: string }) => {
+    const res = await userModel.find({ name: { $regex: new RegExp(user_search, 'i') } })
+    return {
+      message: 'success',
+      data: res
     }
   }
 }

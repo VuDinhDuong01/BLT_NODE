@@ -40,13 +40,13 @@ export const TweetController = {
     }
   },
   getListTweet: async (req: Request, res: Response) => {
-    try{
-      const { page, limit, title_tweet , user_id } = req.query
+    try {
+      const { page, limit, title_tweet, id_user } = req.query
       const response = await TweetServices.getListTweet({
         limit: limit as string,
         page: page as string,
         title_tweet: title_tweet as string,
-        user_id:user_id as string 
+        id_user: id_user as string
       })
       return res.json(response)
     } catch (error: unknown) {

@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from 'express'
+import { unlink } from 'fs'
 
 import { userServices } from '~/services/user.services'
 import { EmailTokenTypes, EmailVerifyToken, forgotPasswordType, verify_access_token } from '~/type'
@@ -115,6 +116,15 @@ export const userControllers = {
         limit: limit as string,
         page: page as string
       })
+      return res.json(result)
+    } catch (error: unknown) {
+      console.log(error)
+    }
+  },
+  getSearchUser: async (req: Request, res: Response) => {
+    try {
+      const { user_search } = req.query
+      const result = await userServices.searchUser({ user_search: user_search as string })
       return res.json(result)
     } catch (error: unknown) {
       console.log(error)
