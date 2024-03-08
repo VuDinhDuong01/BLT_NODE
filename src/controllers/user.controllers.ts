@@ -3,6 +3,7 @@ import { unlink } from 'fs'
 
 import { userServices } from '~/services/user.services'
 import { EmailTokenTypes, EmailVerifyToken, forgotPasswordType, verify_access_token } from '~/type'
+import { userType } from '~/types/users.types'
 
 export const userControllers = {
   register: async (req: Request, res: Response) => {
@@ -15,9 +16,8 @@ export const userControllers = {
   },
   EmailVerifyToken: async (req: Request, res: Response) => {
     try {
-      const profile = req.email_verify_token as EmailVerifyToken
+      const profile = req.email_verify_token as userType
       const result = await userServices.EmailVerifyToken(profile)
-
       return res.json(result)
     } catch (e) {
       console.log(e)

@@ -12,8 +12,6 @@ import { randomToken } from '~/utils/random-token'
 import { EmailVerifyToken } from '~/type'
 import { GenerateType } from '~/types/generate'
 import { TweetDetail } from '~/types/tweet.types'
-import { list } from 'pm2'
-import { List } from 'lodash'
 
 export const userServices = {
   access_token: async ({ user_id, time }: { user_id: string; time: string | number }) =>
@@ -43,8 +41,6 @@ export const userServices = {
     const _id = new mongoose.Types.ObjectId()
     const codeRandom = randomToken()
     await sendMail({ subject: 'Mã xác thực của bạn tại đây', object: codeRandom })
-    const maxAge = 15 * 60 * 1000
-    const expireTime = new Date(Date.now() + maxAge)
     const dataResponse = {
       ...payload,
       _id: _id,
@@ -52,7 +48,6 @@ export const userServices = {
       password: hashPassword(payload.password)
     }
     await userModel.create(dataResponse)
-    response.cookie('profile', dataResponse, { httpOnly: true, expires: expireTime })
     return {
       message: 'register successfully',
       data: {
@@ -66,13 +61,31 @@ export const userServices = {
     return checkExist
   },
 
-  EmailVerifyToken: async (profile: EmailVerifyToken) => {
+  EmailVerifyToken: async (profile: userType) => {
     const [access_token, refresh_token] = await Promise.all([
-      userServices.access_token({ user_id: profile._id.toString(), time: '1h' }),
-      userServices.refresh_token({ user_id: profile._id.toString() })
+      userServices.access_token({ user_id: profile?._id!.toString(), time: '1h' }),
+      userServices.refresh_token({ user_id: profile?._id!.toString() })
     ])
-    delete profile.email_verify_token
-    await Promise.all([refreshTokenModel.create({ refresh_token }), userModel.create(profile)])
+    await Promise.all([
+      refreshTokenModel.create({ refresh_token }),
+      userModel.findOneAndUpdate(
+        {
+          _id: new mongoose.Types.ObjectId(profile._id)
+        },
+        {
+          $set: {
+            verify: 1,
+            email_verify_token: ''
+          },
+          $currentDate: {
+            updated_at: true
+          }
+        },
+        {
+          new: true
+        }
+      )
+    ])
     return {
       data: {
         access_token,

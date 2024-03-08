@@ -1,7 +1,6 @@
 import { Schema } from 'mongoose'
 import { userType } from '~/types/users.types'
 
-
 export const userSchema = new Schema<userType>(
   {
     name: { type: String, default: '' },
@@ -15,18 +14,19 @@ export const userSchema = new Schema<userType>(
     username: { type: String, default: '' },
     avatar: { type: String, default: '' },
     cover_photo: { type: String, default: '' },
-    roles:{
+    verify: { type: Number, default: 0 },
+    email_verify_token: { type: String, default: '' },
+    roles: {
       type: [String],
       enum: ['user', 'admin', 'customer'],
-      default: ['user'],
+      default: ['user']
     },
-    
     created_at: { type: Date, default: Date.now },
     updated_at: { type: Date, default: Date.now }
-
   },
   {
     collection: 'users'
-  })
+  }
+)
 
 export default userSchema

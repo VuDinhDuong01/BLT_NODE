@@ -8,7 +8,8 @@ import { verifyJWT } from '~/utils/jwt'
 import { userModel } from '~/models/model/user.model'
 import { hashPassword } from '~/utils/hash-password'
 import { RequestWithCookies } from '~/type'
-
+import mongoose, { Mongoose } from 'mongoose'
+import { check } from 'express-validator'
 
 export const validationRegister = validate(
   checkSchema(
@@ -53,17 +54,25 @@ export const validationEmailVerifyToken = validate(
       email_verify_token: {
         custom: {
           options: async (_, { req }) => {
-            const { code } = req.body
-            const profileCookie = (req as RequestWithCookies).cookies.profile
-            if (profileCookie !== undefined) {
-              if (code.toString() !== profileCookie.email_verify_token) {
-                throw new Error('Mã xác thực không đúng')
-              } else {
-                req.email_verify_token = profileCookie
-                return true
+            const { code, user_id } = req.body
+            const checkToken = await userModel.findOne({
+              _id: new mongoose.Types.ObjectId(user_id),
+              email_verify_token: code
+            })
+            if (checkToken) {
+              const currentTime = new Date()
+              const created_at = checkToken.created_at
+              const timeDiff = (currentTime.getTime() - (created_at as Date).getTime()) / (1000 * 60)
+              if (timeDiff > 5) {
+                await userModel.deleteOne({
+                  _id: new mongoose.Types.ObjectId(user_id)
+                })
+                throw new Error('Mã hết hiệu lực')
               }
+              req.email_verify_token = checkToken
+              return true
             } else {
-              throw new Error('Mã xác thực đã hết hiệu lực')
+              throw new Error('mã bạn nhập không đúng')
             }
           }
         }
@@ -304,7 +313,7 @@ export const validateChangePassword = validate(
       },
       new_password: {
         isEmpty: false,
-        errorMessage: 'Mật khẩu mới không được bỏ trống',
+        errorMessage: 'Mật khẩu mới không được bỏ trống'
       }
     },
     ['body']
