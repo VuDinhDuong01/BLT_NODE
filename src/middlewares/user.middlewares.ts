@@ -1,15 +1,14 @@
 import { checkSchema } from 'express-validator/src/middlewares/schema'
 
-import { errorWithStatus } from '~/contants/errorMessage'
+import { errorWithStatus } from '~/constants/errorMessage'
 import { userServices } from '~/services/user.services'
 import { validate } from '~/utils/validation'
-import { configEnv } from '~/contants/configENV'
+import { configEnv } from '~/constants/configENV'
 import { verifyJWT } from '~/utils/jwt'
 import { userModel } from '~/models/model/user.model'
 import { hashPassword } from '~/utils/hash-password'
-import { RequestWithCookies } from '~/type'
-import mongoose, { Mongoose } from 'mongoose'
-import { check } from 'express-validator'
+import mongoose from 'mongoose'
+
 
 export const validationRegister = validate(
   checkSchema(

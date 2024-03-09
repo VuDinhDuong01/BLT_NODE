@@ -1,6 +1,6 @@
 import Redis from "ioredis";
 
-import { configEnv } from "~/contants/configENV";
+import { configEnv } from "~/constants/configENV";
 
 export const connectRedis = async () => {
   try {

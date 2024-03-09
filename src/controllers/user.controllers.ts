@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from 'express'
 import { unlink } from 'fs'
 
 import { userServices } from '~/services/user.services'
-import { EmailTokenTypes, EmailVerifyToken, forgotPasswordType, verify_access_token } from '~/type'
+import { EmailTokenTypes, forgotPasswordType, verify_access_token } from '~/type'
 import { userType } from '~/types/users.types'
 
 export const userControllers = {

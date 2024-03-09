@@ -2,7 +2,7 @@ import { SESClient, SendEmailCommand } from '@aws-sdk/client-ses'
 import path from 'path'
 import fs from 'fs'
 
-import { configEnv } from '~/contants/configENV'
+import { configEnv } from '~/constants/configENV'
 
 const template = fs.readFileSync(path.resolve('src/template/sendMail.template.html'), 'utf8')
 
