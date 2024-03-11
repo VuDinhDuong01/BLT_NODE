@@ -18,6 +18,7 @@ import { handleError } from './utils/handle-error'
 import { checkFolderUploadImageExsis, checkFolderUploadVideoExsis } from './utils/handleUploadFile'
 import { conversationsModel } from './models/model/conversations.model'
 import mongoose from 'mongoose'
+import { notificationModel } from './models/model/notificaton.model'
 
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
@@ -87,24 +88,72 @@ io.on('connection', (socket) => {
     socket.to(receiver_socket_id).emit('no_text_input_events', 'no_enter')
   })
 
-  socket.on('send_notification_like', (data) => {
-    const receiver_socket_id = user[data.to]?.socket_id
-    socket.to(receiver_socket_id).emit('notification_like', data)
-  })
+  socket.on(
+    'send_notification_like',
+    async (data: { tweet_id: string; to: string; avatar: string; status: string; username: string }) => {
+      console.log(data)
+      try {
+        const receiver_socket_id = user[data.to]?.socket_id
+        socket.to(receiver_socket_id).emit('notification_like', data)
+        await notificationModel.create({
+          tweet_id: new mongoose.Types.ObjectId(data.tweet_id),
+          receiver_id: new mongoose.Types.ObjectId(data.to),
+          avatar: data.avatar,
+          status: data.status,
+          username: data.username
+        })
+      } catch (error: unknown) {
+        console.log(error)
+      }
+    }
+  )
 
-  socket.on('follow_user', (data) => {
+  socket.on('follow_user', async (data) => {
     const receiver_socket_id = user[data.to]?.socket_id
     socket.to(receiver_socket_id).emit('following_user', data)
+    try {
+      await notificationModel.create({
+        sender_id: new mongoose.Types.ObjectId(data.from),
+        receiver_id: new mongoose.Types.ObjectId(data.to),
+        avatar: data.avatar,
+        status: data.status,
+        username: data.username
+      })
+    } catch (error: unknown) {
+      console.log(error)
+    }
   })
 
-  socket.on('send_notification_bookmark', (data) => {
+  socket.on('send_notification_bookmark', async (data) => {
     const receiver_socket_id = user[data.to]?.socket_id
     socket.to(receiver_socket_id).emit('notification_bookmark', data)
+    try {
+      await notificationModel.create({
+        tweet_id: new mongoose.Types.ObjectId(data.tweet_id),
+        receiver_id: new mongoose.Types.ObjectId(data.to),
+        avatar: data.avatar,
+        status: data.status,
+        username: data.username
+      })
+    } catch (error: unknown) {
+      console.log(error)
+    }
   })
 
-  socket.on('send_notification_comment', (data) => {
+  socket.on('send_notification_comment', async (data) => {
     const receiver_socket_id = user[data.to]?.socket_id
     socket.to(receiver_socket_id).emit('notification_comment', data)
+    try {
+      await notificationModel.create({
+        tweet_id: new mongoose.Types.ObjectId(data.tweet_id),
+        receiver_id: new mongoose.Types.ObjectId(data.to),
+        avatar: data.avatar,
+        status: data.status,
+        username: data.username
+      })
+    } catch (error: unknown) {
+      console.log(error)
+    }
   })
 
   socket.on('disconnect', () => {

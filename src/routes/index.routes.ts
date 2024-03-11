@@ -10,6 +10,7 @@ import commentRoute from './comment.routes'
 import likeCommentRoute from './likeComment.routes'
 import repliesCommentRoute from './repliesComment.routes'
 import conversationRoute from './conversations.routes'
+import notificationRoute from './notification.routes'
 
 const route = (app: Application) => {
   app.use('/api/v1', userRoute)
@@ -22,6 +23,7 @@ const route = (app: Application) => {
   app.use('/api/v1', likeCommentRoute)
   app.use('/api/v1', repliesCommentRoute)
   app.use('/api/v1', conversationRoute)
+  app.use('/api/v1', notificationRoute)
 }
 
 export default route
