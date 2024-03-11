@@ -65,7 +65,6 @@ io.on('connection', (socket) => {
   console.log('user', user)
 
   socket.on('message_private', async (data: { content: string; to: string; from: string }) => {
-    console.log(data)
     try {
       const receiver_socket_id = user[data.to]?.socket_id
       socket.to(receiver_socket_id).emit('send_message', data)
@@ -89,9 +88,23 @@ io.on('connection', (socket) => {
   })
 
   socket.on('send_notification_like', (data) => {
-    console.log(data)
     const receiver_socket_id = user[data.to]?.socket_id
     socket.to(receiver_socket_id).emit('notification_like', data)
+  })
+
+  socket.on('follow_user', (data) => {
+    const receiver_socket_id = user[data.to]?.socket_id
+    socket.to(receiver_socket_id).emit('following_user', data)
+  })
+
+  socket.on('send_notification_bookmark', (data) => {
+    const receiver_socket_id = user[data.to]?.socket_id
+    socket.to(receiver_socket_id).emit('notification_bookmark', data)
+  })
+
+  socket.on('send_notification_comment', (data) => {
+    const receiver_socket_id = user[data.to]?.socket_id
+    socket.to(receiver_socket_id).emit('notification_comment', data)
   })
 
   socket.on('disconnect', () => {
