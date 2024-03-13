@@ -90,13 +90,26 @@ export const socketConfig = (httpServer: any) => {
       const receiver_socket_id = user[data.to]?.socket_id
       socket.to(receiver_socket_id).emit('following_user', data)
       try {
-        await notificationModel.create({
-          sender_id: new mongoose.Types.ObjectId(data.from),
-          receiver_id: new mongoose.Types.ObjectId(data.to),
-          avatar: data.avatar,
-          status: data.status,
-          username: data.username
-        })
+        await notificationModel.findOneAndUpdate(
+          {
+            sender_id: new mongoose.Types.ObjectId(data.from),
+            receiver_id: new mongoose.Types.ObjectId(data.to),
+            status: data.status
+          },
+          {
+            $setOnInsert: {
+              sender_id: new mongoose.Types.ObjectId(data.from),
+              receiver_id: new mongoose.Types.ObjectId(data.to),
+              avatar: data.avatar,
+              status: data.status,
+              username: data.username
+            }
+          },
+          {
+            new: true,
+            upsert: true
+          }
+        )
       } catch (error: unknown) {
         console.log(error)
       }
