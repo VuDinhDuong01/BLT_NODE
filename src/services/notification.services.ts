@@ -1,7 +1,7 @@
 /* eslint-disable prettier/prettier */
 import mongoose from 'mongoose'
 import { conversationsModel } from '~/models/model/conversations.model';
-import { notificationModel } from '~/models/model/notificaton.model';
+import { notificationModel } from '~/models/model/notification.model';
 
 
 export const notificationServices = {
@@ -18,11 +18,11 @@ export const notificationServices = {
   },
   getNotification: async ({ user_id, limit, page }: { user_id: string, limit: string, page: string }) => {
 
-    const res = await conversationsModel.find({ user_id: new mongoose.Types.ObjectId(user_id) })
+    const res = await notificationModel.find({ receiver_id: new mongoose.Types.ObjectId(user_id) })
       .sort({ created_at: 1 })
       .skip(Number(limit) * (Number(page) - 1))
       .limit(Number(limit))
-    const total_records = await conversationsModel.countDocuments({ user_id: new mongoose.Types.ObjectId(user_id) })
+    const total_records = await notificationModel.countDocuments({ receiver_id: new mongoose.Types.ObjectId(user_id) })
     return {
       message: 'get notification successfully',
       data: res,

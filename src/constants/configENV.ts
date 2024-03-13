@@ -16,5 +16,6 @@ export const configEnv = {
   fromEmail:process.env.fromEmail as string ,
   toAddress:process.env.toAddress as string  ,
   URL_FE:process.env.localhost as string ,
-  PRIMARY_KEY_REFRESH_TOKEN:process.env.PRIMARY_KEY_REFRESH_TOKEN as string 
+  PRIMARY_KEY_REFRESH_TOKEN:process.env.PRIMARY_KEY_REFRESH_TOKEN as string ,
+  URL_CLIENT:process.env.URL_CLIENT
 }

@@ -17,7 +17,7 @@ const notificationObjectID = mongoose.Types.ObjectId
 export const notificationSchema = new Schema<NotificationType>(
   {
     sender_id: { type: notificationObjectID, default: null },
-    receiver_id: { type: notificationObjectID, default: '' },
+    receiver_id: { type: notificationObjectID, default: null },
     tweet_id: { type: notificationObjectID, default: null },
     status: { type: String, default: '' },
     username: { type: String, default: '' },
