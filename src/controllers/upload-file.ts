@@ -1,15 +1,12 @@
 import { CompleteMultipartUploadCommandOutput } from '@aws-sdk/client-s3'
 import { Request, Response } from 'express'
 import sharp from 'sharp'
-import { handleUploadFile, handleUploadVideo } from '~/utils/handleUploadFile'
+import { handleUploadFile } from '~/utils/handleUploadFile'
 import { uploadImageS3 } from '~/utils/s3'
-import fsPromise from 'fs/promises'
 import fs from 'fs'
-import path from 'path'
-import mime from 'mime'
-import { userModel } from '~/models/model/user.model'
-import { verify_access_token } from '~/type'
-
+import multer from 'multer'
+import { v2 as cloudinary } from 'cloudinary'
+import { configEnv } from '~/constants/configENV'
 enum MediaType {
   IMAGE,
   VIDEO
@@ -20,7 +17,7 @@ export const uploadFileController = {
     try {
       const file = await handleUploadFile(req)
       const fileResult = await Promise.all(
-        file.map(async (image:any) => {
+        file.map(async (image: any) => {
           const newFile = image.newFilename.split('.')[0]
           const fileNameImage = `${newFile}.jpg`
           await sharp(image.filepath).jpeg({
@@ -49,44 +46,83 @@ export const uploadFileController = {
       console.log(error)
     }
   },
-  uploadVideo: async (req: Request, res: Response) => {
-    try {
-      const fileVideo = await handleUploadVideo(req)
-      const { filepath, newFilename } = fileVideo[0]
-      const range = req.headers.range
-      if (!range) {
-        return res.status(400).send('Requires Range header')
+  uploadVideo: async (req: any, res: any) => {
+    const storage = multer.diskStorage({
+      filename: (req, file, cb) => {
+        const fileExt = file.originalname.split('.').pop()
+        const filename = `${new Date().getTime()}.${fileExt}`
+        cb(null, filename)
       }
-      const videoPath = filepath
-      const videoSize = fs.statSync(videoPath).size
-      const CHUNK_SIZE = 0
-      const start = Number(range?.replace(/\D/g, ''))
-      const end = Math.min(start + CHUNK_SIZE, videoSize - 1)
-      const contentLength = end - start + 1
-      const contentType = mime.getType(filepath) || 'video/*'
-      const headers = {
-        'Content-Range': `bytes ${start}-${end}/${videoSize}`,
-        'Accept-Ranges': 'bytes',
-        'Content-Length': contentLength,
-        'Content-Type': contentType
+    })
+
+    const fileFilter = (req: any, file: any, cb: any) => {
+      if (file.mimetype === 'video/mp4') {
+        cb(null, true)
+      } else {
+        cb(
+          {
+            message: 'Unsupported File Format'
+          },
+          false
+        )
       }
-      res.writeHead(206, headers)
-      const videoStream = fs.createReadStream(videoPath, { start, end })
-      videoStream.pipe(res)
-      const uploadVideoS3 = await uploadImageS3({
-        fileName: 'videos/' + newFilename,
-        filePath: filepath,
-        contentType: contentType
-      })
-      if (fs.existsSync(path.resolve('uploads/videos', newFilename))) {
-        await fsPromise.unlink(filepath)
-      }
-      return res.json({
-        video: (uploadVideoS3 as CompleteMultipartUploadCommandOutput).Location,
-        type: MediaType.VIDEO
-      })
-    } catch (error) {
-      console.log(error)
     }
+
+    const upload = multer({
+      storage,
+      limits: {
+        fieldNameSize: 200,
+        fileSize: 30 * 1024 * 1024
+      },
+      fileFilter
+    }).single('video')
+
+    upload(req, res, (err) => {
+      if (err) {
+        return res.send(err)
+      }
+
+      const { path } = (req as any).file
+
+      const fName = (req as any).file.originalname.split('.')[0]
+      cloudinary.config({
+        cloud_name: configEnv.CLOUDINARY_NAME,
+        api_key: configEnv.CLOUDINARY_API_KEY,
+        api_secret: configEnv.CLOUDINARY_API_SECRET
+      })
+      cloudinary.uploader?.upload(
+        path,
+        {
+          resource_type: 'video',
+          public_id: `upload_video/${fName}`,
+          chunk_size: 6000000,
+          eager: [
+            {
+              width: 300,
+              height: 300,
+              crop: 'pad',
+              audio_codec: 'none'
+            },
+            {
+              width: 160,
+              height: 100,
+              crop: 'crop',
+              gravity: 'south',
+              audio_codec: 'none'
+            }
+          ]
+        },
+
+        (err: any, video: any) => {
+          if (err) return res.send(err)
+
+          fs.unlinkSync(path)
+          return res.json({
+            message: 'success',
+            path: video.url
+          })
+        }
+      )
+    })
   }
 }
