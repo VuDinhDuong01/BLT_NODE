@@ -19,7 +19,7 @@ export const notificationServices = {
   getNotification: async ({ user_id, limit, page }: { user_id: string, limit: string, page: string }) => {
 
     const res = await notificationModel.find({ receiver_id: new mongoose.Types.ObjectId(user_id) })
-      .sort({ created_at: 1 })
+      .sort({ created_at: -1 })
       .skip(Number(limit) * (Number(page) - 1))
       .limit(Number(limit))
     const total_records = await notificationModel.countDocuments({ receiver_id: new mongoose.Types.ObjectId(user_id) })
