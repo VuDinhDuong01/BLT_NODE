@@ -1,25 +1,24 @@
-#Docker images được kế thừa từ 1 image khác có sẵn
+# Sử dụng image chứa Node.js
 FROM node:20-alpine3.16
 
-#Thư mục làm việc mặc định trong image docker => thích đặt tên gì cũng đc
-
+# Đặt thư mục làm việc mặc định trong container
 WORKDIR /app
 
-#copy các file config  from host to image vào thư mục hiện tại của docker /app
-COPY  package.json .
-COPY  package-lock.json .
-COPY  tsconfig.json .
-COPY .env .
-COPY ./src ./src
+# Copy package.json và package-lock.json vào thư mục làm việc
+COPY package.json .
+COPY package-lock.json .
+COPY tsconfig.json .
+COPY nodemon.json .
+
+# Cài đặt dependencies của ứng dụng
+RUN npm install
+RUN npm run  build
+
 COPY . .
+COPY .env .
 
-# Run comand in the image
+# Port mà ứng dụng sẽ lắng nghe
+EXPOSE 4000
 
-RUN npm install  
-RUN npm run build
-
-#RUN inside a container
-
-EXPOSE 4000 
-
-CMD [ "npm", "run", "dev"]
+# Lệnh để chạy ứng dụng khi container được khởi động
+CMD ["npm", "run", "dev"]

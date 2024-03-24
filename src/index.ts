@@ -70,6 +70,6 @@ checkFolderUploadVideoExsis()
 
 route(app)
 app.use(handleError)
-httpServer.listen(port, () => {
+httpServer.listen(port as number, '0.0.0.0' as string, () => {
   console.log(`Example app listening on port http://localhost:${port}`)
 })
