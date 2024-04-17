@@ -16,7 +16,7 @@ export const socketConfig = (httpServer: any) => {
 
   const user: any = {}
 
-  io.on('connection', (socket) => {
+  io.on('connection', async (socket) => {
     const user_id = socket.handshake.auth?._id
     if (user_id) {
       user[user_id] = {
@@ -25,7 +25,8 @@ export const socketConfig = (httpServer: any) => {
     }
 
     console.log('user', user)
-
+    const keyUser = Object.keys(user)
+    socket.emit('check_active', keyUser)
     socket.on('message_private', async (data: { content: string; to: string; from: string }) => {
       try {
         const receiver_socket_id = user[data.to]?.socket_id
@@ -114,9 +115,9 @@ export const socketConfig = (httpServer: any) => {
       }
     })
 
-    socket.on('disconnect', () => {
-      console.log('co user da roi khoi', socket.id)
+    socket.on('disconnect', async () => {
       delete user[user_id]
+      console.log('co user da roi khoi', socket.id)
       console.log(user)
     })
   })

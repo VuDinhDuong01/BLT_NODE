@@ -2,7 +2,7 @@
 
 // const pathName = process.env.NODE_ENV
  config({
-  //  path: `.env.${pathName}`
+    path: `.env`
  })
 
 export const configEnv = {
