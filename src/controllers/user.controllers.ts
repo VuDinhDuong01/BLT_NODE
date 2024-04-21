@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express'
 import { unlink } from 'fs'
-
+import { ParamsDictionary } from 'express-serve-static-core'
 import { userServices } from '~/services/user.services'
 import { EmailTokenTypes, forgotPasswordType, verify_access_token } from '~/type'
 import { userType } from '~/types/users.types'
@@ -128,6 +128,36 @@ export const userControllers = {
       return res.json(result)
     } catch (error: unknown) {
       console.log(error)
+    }
+  },
+
+  getAllPost: async (req: Request, res: Response) => {
+    const { page, limit, username, sort_by, order } = req.query
+    const result = await userServices.getAllPost({
+      page: page as string,
+      limit: limit as string,
+      username: username as string | null,
+      sort_by: sort_by as string,
+      order: order as string
+    })
+    return res.json(result)
+  },
+  deletePost: async (req: Request, res: Response) => {
+    try {
+      const { user_id } = req.params
+      const result = await userServices.deletePost(user_id)
+      return res.json(result)
+    } catch (err) {
+      console.log(err)
+    }
+  },
+  deleteManyPost: async (req: Request, res: Response) => {
+    try {
+      const { manyId } = req.body
+      const result = await userServices.deleteManyPost(manyId)
+      return res.json(result)
+    } catch (err) {
+      console.log(err)
     }
   }
 }

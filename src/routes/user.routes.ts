@@ -36,4 +36,8 @@ route.post('/logout', validateAccessToken, validateRefreshToken, userControllers
 route.get('/get_tweet_user/:user_id', validateAccessToken, userControllers.getTweetUser)
 route.get('/get_search_user', validateAccessToken, userControllers.getSearchUser)
 
+route.get('/all_user', validateAccessToken, userControllers.getAllPost)
+route.delete('/user/:user_id', validateAccessToken, userControllers.deletePost)
+route.delete('/user', validateAccessToken, userControllers.deleteManyPost)
+
 export default route

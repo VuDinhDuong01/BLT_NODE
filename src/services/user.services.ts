@@ -1022,5 +1022,76 @@ export const userServices = {
       message: 'success',
       data: res
     }
-  }
+  },
+  
+
+  getAllPost: async ({
+    limit,
+    page,
+    username,
+    sort_by,
+    order
+  }: {
+    limit: string
+    page: string
+    username?: string | null
+    sort_by?: string | null
+    order?: string
+  }) => {
+    const $match: any[] = []
+
+    if (username) {
+      $match.push({
+        $match: {
+          $text: {
+            $search: name
+          }
+        }
+      })
+    }
+    $match.push({
+      $sort: { created_at: -1 }
+    })
+    if (sort_by === 'username') {
+      const sortOrder = order === 'asc' ? 1 : -1
+      const sortObject: any = {}
+      sortObject['username'] = sortOrder
+      $match.push({
+        $sort: sortObject
+      })
+    }
+    $match.push({
+      $skip: Number(limit) * (Number(page) - 1)
+    })
+    $match.push({
+      $limit: Number(limit)
+    })
+    const queryCount: any = {}
+    if (username) {
+      queryCount['$text'] = { $search: username }
+    }
+    const response = await userModel.aggregate($match)
+    const totalItem = await userModel.countDocuments(queryCount)
+
+    return {
+      message: 'get user successfully',
+      data: response,
+      total_page: Math.ceil(totalItem / Number(limit))
+    }
+  },
+
+  deletePost: async (user_id: string) => {
+    await userModel.deleteOne({ _id: new mongoose.Types.ObjectId(user_id) })
+    return {
+      message: 'delete user successfully'
+    }
+  },
+  deleteManyPost: async (arrayIdPost: string[]) => {
+    const ObjectId = arrayIdPost.map((item) => new mongoose.Types.ObjectId(item))
+    await userModel.deleteMany({ _id: { $in: ObjectId } })
+    return {
+      message: 'delete  many user successfully'
+    }
+  },
+
 }

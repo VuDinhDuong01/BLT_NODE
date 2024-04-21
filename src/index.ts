@@ -13,7 +13,7 @@ import cookieParser from 'cookie-parser'
 import { configEnv } from './constants/configENV'
 import route from './routes/index.routes'
 import { connectMongoose } from './models/connectDB/connect-mongoose'
-import { connectRedis } from './models/connectDB/connect-redis'
+// import { connectRedis } from './models/connectDB/connect-redis'
 import { handleError } from './utils/handle-error'
 import { checkFolderUploadImageExsis, checkFolderUploadVideoExsis } from './utils/handleUploadFile'
 import { socketConfig } from './utils/socket'
@@ -63,7 +63,7 @@ app.use(helmet())
 app.use(cookieParser())
 
 connectMongoose()
-connectRedis()
+// connectRedis()
 
 checkFolderUploadImageExsis()
 checkFolderUploadVideoExsis()
