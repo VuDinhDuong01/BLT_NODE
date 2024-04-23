@@ -9,7 +9,7 @@ import { configEnv } from '~/constants/configENV'
 import { sendMail } from '~/utils/send-mail'
 import { refreshTokenModel } from '~/models/model/refresh-token'
 import { randomToken } from '~/utils/random-token'
-import { EmailVerifyToken } from '~/type'
+// import { EmailVerifyToken } from '~/type'
 import { GenerateType } from '~/types/generate'
 import { TweetDetail } from '~/types/tweet.types'
 
@@ -1025,7 +1025,7 @@ export const userServices = {
   },
   
 
-  getAllPost: async ({
+  getAllUser: async ({
     limit,
     page,
     username,
@@ -1080,13 +1080,13 @@ export const userServices = {
     }
   },
 
-  deletePost: async (user_id: string) => {
+  deleteUser: async (user_id: string) => {
     await userModel.deleteOne({ _id: new mongoose.Types.ObjectId(user_id) })
     return {
       message: 'delete user successfully'
     }
   },
-  deleteManyPost: async (arrayIdPost: string[]) => {
+  deleteManyUser: async (arrayIdPost: string[]) => {
     const ObjectId = arrayIdPost.map((item) => new mongoose.Types.ObjectId(item))
     await userModel.deleteMany({ _id: { $in: ObjectId } })
     return {

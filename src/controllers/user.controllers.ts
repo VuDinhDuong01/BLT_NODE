@@ -131,9 +131,9 @@ export const userControllers = {
     }
   },
 
-  getAllPost: async (req: Request, res: Response) => {
+  getAllUser: async (req: Request, res: Response) => {
     const { page, limit, username, sort_by, order } = req.query
-    const result = await userServices.getAllPost({
+    const result = await userServices.getAllUser({
       page: page as string,
       limit: limit as string,
       username: username as string | null,
@@ -142,19 +142,19 @@ export const userControllers = {
     })
     return res.json(result)
   },
-  deletePost: async (req: Request, res: Response) => {
+  deleteUser: async (req: Request, res: Response) => {
     try {
-      const { user_id } = req.params
-      const result = await userServices.deletePost(user_id)
+      const { user_id } = req.body
+      const result = await userServices.deleteUser(user_id)
       return res.json(result)
     } catch (err) {
       console.log(err)
     }
   },
-  deleteManyPost: async (req: Request, res: Response) => {
+  deleteManyUser: async (req: Request, res: Response) => {
     try {
       const { manyId } = req.body
-      const result = await userServices.deleteManyPost(manyId)
+      const result = await userServices.deleteManyUser(manyId)
       return res.json(result)
     } catch (err) {
       console.log(err)
