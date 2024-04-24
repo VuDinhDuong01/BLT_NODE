@@ -132,11 +132,11 @@ export const userControllers = {
   },
 
   getAllUser: async (req: Request, res: Response) => {
-    const { page, limit, username, sort_by, order } = req.query
+    const { page, limit, name, sort_by, order } = req.query
     const result = await userServices.getAllUser({
       page: page as string,
       limit: limit as string,
-      username: username as string | null,
+      name: name as string | null,
       sort_by: sort_by as string,
       order: order as string
     })

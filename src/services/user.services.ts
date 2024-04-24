@@ -1028,19 +1028,19 @@ export const userServices = {
   getAllUser: async ({
     limit,
     page,
-    username,
+    name,
     sort_by,
     order
   }: {
     limit: string
     page: string
-    username?: string | null
+    name?: string | null
     sort_by?: string | null
     order?: string
   }) => {
     const $match: any[] = []
 
-    if (username) {
+    if (name) {
       $match.push({
         $match: {
           $text: {
@@ -1052,10 +1052,10 @@ export const userServices = {
     $match.push({
       $sort: { created_at: -1 }
     })
-    if (sort_by === 'username') {
+    if (sort_by === 'name') {
       const sortOrder = order === 'asc' ? 1 : -1
       const sortObject: any = {}
-      sortObject['username'] = sortOrder
+      sortObject['name'] = sortOrder
       $match.push({
         $sort: sortObject
       })
@@ -1067,8 +1067,8 @@ export const userServices = {
       $limit: Number(limit)
     })
     const queryCount: any = {}
-    if (username) {
-      queryCount['$text'] = { $search: username }
+    if (name) {
+      queryCount['$text'] = { $search: name }
     }
     const response = await userModel.aggregate($match)
     const totalItem = await userModel.countDocuments(queryCount)
