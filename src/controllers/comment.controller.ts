@@ -58,5 +58,34 @@ export const commentController = {
     } catch (error: unknown) {
       console.log(error)
     }
+  },
+  getAllComment: async (req: Request, res: Response) => {
+    const { page, limit, name, sort_by, order } = req.query
+    const result = await commentServices.getAllComment({
+      page: page as string,
+      limit: limit as string,
+      name: name as string | null,
+      sort_by: sort_by as string,
+      order: order as string
+    })
+    return res.json(result)
+  },
+  deleteComment: async (req: Request, res: Response) => {
+    try {
+      const { user_id } = req.body
+      const result = await commentServices.deleteComment(user_id)
+      return res.json(result)
+    } catch (err) {
+      console.log(err)
+    }
+  },
+  deleteManyComment: async (req: Request, res: Response) => {
+    try {
+      const { manyId } = req.body
+      const result = await commentServices.deleteManyComment(manyId)
+      return res.json(result)
+    } catch (err) {
+      console.log(err)
+    }
   }
 }

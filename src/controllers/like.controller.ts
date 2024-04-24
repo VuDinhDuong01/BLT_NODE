@@ -36,5 +36,34 @@ export const likeController = {
     } catch (error: unknown) {
       console.log(error)
     }
+  },
+  getAllLike: async (req: Request, res: Response) => {
+    const { page, limit, name, sort_by, order } = req.query
+    const result = await likeServices.getAllLike({
+      page: page as string,
+      limit: limit as string,
+      name: name as string | null,
+      sort_by: sort_by as string,
+      order: order as string
+    })
+    return res.json(result)
+  },
+  deleteLike: async (req: Request, res: Response) => {
+    try {
+      const { user_id } = req.body
+      const result = await likeServices.deleteLike(user_id)
+      return res.json(result)
+    } catch (err) {
+      console.log(err)
+    }
+  },
+  deleteManyLike: async (req: Request, res: Response) => {
+    try {
+      const { manyId } = req.body
+      const result = await likeServices.deleteManyLike(manyId)
+      return res.json(result)
+    } catch (err) {
+      console.log(err)
+    }
   }
 }

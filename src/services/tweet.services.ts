@@ -574,5 +574,74 @@ export const TweetServices = {
       
     }
 
-  }
+  },
+
+  getAllTweet: async ({
+    limit,
+    page,
+    name,
+    sort_by,
+    order
+  }: {
+    limit: string
+    page: string
+    name?: string | null
+    sort_by?: string | null
+    order?: string
+  }) => {
+    const $match: any[] = []
+
+    if (name) {
+      $match.push({
+        $match: {
+          $text: {
+            $search: name
+          }
+        }
+      })
+    }
+    $match.push({
+      $sort: { created_at: -1 }
+    })
+    if (sort_by === 'name') {
+      const sortOrder = order === 'asc' ? 1 : -1
+      const sortObject: any = {}
+      sortObject['name'] = sortOrder
+      $match.push({
+        $sort: sortObject
+      })
+    }
+    $match.push({
+      $skip: Number(limit) * (Number(page) - 1)
+    })
+    $match.push({
+      $limit: Number(limit)
+    })
+    const queryCount: any = {}
+    if (name) {
+      queryCount['$text'] = { $search: name }
+    }
+    const response = await tweetModel.aggregate($match)
+    const totalItem = await tweetModel.countDocuments(queryCount)
+
+    return {
+      message: 'get tweet successfully',
+      data: response,
+      total_page: Math.ceil(totalItem / Number(limit))
+    }
+  },
+
+  deleteTweet: async (user_id: string) => {
+    await tweetModel.deleteOne({ _id: new mongoose.Types.ObjectId(user_id) })
+    return {
+      message: 'delete tweet successfully'
+    }
+  },
+  deleteManyTweet: async (arrayIdPost: string[]) => {
+    const ObjectId = arrayIdPost.map((item) => new mongoose.Types.ObjectId(item))
+    await tweetModel.deleteMany({ _id: { $in: ObjectId } })
+    return {
+      message: 'delete  many tweet successfully'
+    }
+  },
 }

@@ -52,5 +52,35 @@ export const TweetController = {
     } catch (error: unknown) {
       console.log(error)
     }
+  },
+
+  getAllTweet: async (req: Request, res: Response) => {
+    const { page, limit, name, sort_by, order } = req.query
+    const result = await TweetServices.getAllTweet({
+      page: page as string,
+      limit: limit as string,
+      name: name as string | null,
+      sort_by: sort_by as string,
+      order: order as string
+    })
+    return res.json(result)
+  },
+  deleteTweet: async (req: Request, res: Response) => {
+    try {
+      const { user_id } = req.body
+      const result = await TweetServices.deleteTweet(user_id)
+      return res.json(result)
+    } catch (err) {
+      console.log(err)
+    }
+  },
+  deleteManyTweet: async (req: Request, res: Response) => {
+    try {
+      const { manyId } = req.body
+      const result = await TweetServices.deleteManyTweet(manyId)
+      return res.json(result)
+    } catch (err) {
+      console.log(err)
+    }
   }
 }

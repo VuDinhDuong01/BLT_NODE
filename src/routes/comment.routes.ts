@@ -11,4 +11,8 @@ route.delete('/unComment', validateAccessToken, commentController.delete)
 route.patch('/update_comment', validateAccessToken, commentController.edit)
 route.get('/comment/:tweet_id', validateAccessToken, commentController.getList)
 
+route.get('/all_comment', commentController.getAllComment)
+route.delete('/comment', commentController.deleteComment)
+route.delete('/many_comment', commentController.deleteManyComment)
+
 export default route
