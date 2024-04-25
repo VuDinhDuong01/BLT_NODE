@@ -59,7 +59,7 @@ export const TweetController = {
     const result = await TweetServices.getAllTweet({
       page: page as string,
       limit: limit as string,
-      name: name as string | null,
+      content: name as string | null,
       sort_by: sort_by as string,
       order: order as string
     })

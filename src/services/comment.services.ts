@@ -210,23 +210,23 @@ export const commentServices = {
   getAllComment: async ({
     limit,
     page,
-    name,
+    content_comment,
     sort_by,
     order
   }: {
     limit: string
     page: string
-    name?: string | null
+    content_comment?: string | null
     sort_by?: string | null
     order?: string
   }) => {
     const $match: any[] = []
 
-    if (name) {
+    if (content_comment) {
       $match.push({
         $match: {
           $text: {
-            $search: name
+            $search: content_comment
           }
         }
       })
@@ -234,10 +234,10 @@ export const commentServices = {
     $match.push({
       $sort: { created_at: -1 }
     })
-    if (sort_by === 'name') {
+    if (sort_by === 'content_comment') {
       const sortOrder = order === 'asc' ? 1 : -1
       const sortObject: any = {}
-      sortObject['name'] = sortOrder
+      sortObject['content_comment'] = sortOrder
       $match.push({
         $sort: sortObject
       })
@@ -249,8 +249,8 @@ export const commentServices = {
       $limit: Number(limit)
     })
     const queryCount: any = {}
-    if (name) {
-      queryCount['$text'] = { $search: name }
+    if (content_comment) {
+      queryCount['$text'] = { $search: content_comment }
     }
     const response = await commentModel.aggregate($match)
     const totalItem = await commentModel.countDocuments(queryCount)

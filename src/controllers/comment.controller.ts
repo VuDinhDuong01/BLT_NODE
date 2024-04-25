@@ -60,11 +60,11 @@ export const commentController = {
     }
   },
   getAllComment: async (req: Request, res: Response) => {
-    const { page, limit, name, sort_by, order } = req.query
+    const { page, limit, content_comment, sort_by, order } = req.query
     const result = await commentServices.getAllComment({
       page: page as string,
       limit: limit as string,
-      name: name as string | null,
+      content_comment: content_comment as string | null,
       sort_by: sort_by as string,
       order: order as string
     })
