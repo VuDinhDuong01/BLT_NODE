@@ -43,7 +43,8 @@ export const followServices = {
           _id: 1,
           name: 1,
           avatar: 1,
-          username: 1
+          username: 1,
+          roles:1,
         }
       }
     ])
