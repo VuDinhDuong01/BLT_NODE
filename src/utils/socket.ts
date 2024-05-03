@@ -22,7 +22,7 @@ export const socketConfig = (httpServer: any) => {
         socket_id: socket.id
       }
     }
-    console.log(user)
+    // console.log(user)
     socket.on('message_private', async (data: { content: string; to: string; from: string }) => {
       try {
         const receiver_socket_id = user[data.to]?.socket_id
@@ -52,26 +52,13 @@ export const socketConfig = (httpServer: any) => {
           try {
             const receiver_socket_id = user[data.to]?.socket_id
             socket.to(receiver_socket_id).emit(sender_type, data)
-            await notificationModel.findOneAndUpdate(
-              {
-                tweet_id: new mongoose.Types.ObjectId(data.tweet_id),
-                receiver_id: new mongoose.Types.ObjectId(data.to),
-                status: data.status
-              },
-              {
-                $setOnInsert: {
-                  tweet_id: new mongoose.Types.ObjectId(data.tweet_id),
-                  receiver_id: new mongoose.Types.ObjectId(data.to),
-                  avatar: data.avatar,
-                  status: data.status,
-                  username: data.username
-                }
-              },
-              {
-                new: true,
-                upsert: true
-              }
-            )
+            await notificationModel.create({
+              tweet_id: new mongoose.Types.ObjectId(data.tweet_id),
+              receiver_id: new mongoose.Types.ObjectId(data.to),
+              avatar: data.avatar,
+              status: data.status,
+              username: data.username
+            })
           } catch (error: unknown) {
             console.log(error)
           }
@@ -81,6 +68,7 @@ export const socketConfig = (httpServer: any) => {
     GenerateSocket({ receiver_type: 'send_notification_like', sender_type: 'notification_like' })
     GenerateSocket({ receiver_type: 'send_notification_bookmark', sender_type: 'notification_bookmark' })
     GenerateSocket({ receiver_type: 'send_notification_comment', sender_type: 'notification_comment' })
+    GenerateSocket({ receiver_type: 'send_notification_reply_comment', sender_type: 'notification_reply_comment' })
 
     socket.on('follow_user', async (data) => {
       const receiver_socket_id = user[data.to]?.socket_id
@@ -110,21 +98,25 @@ export const socketConfig = (httpServer: any) => {
         console.log(error)
       }
     })
-    const checkUserActive = Object.keys(user).includes(data)
+
     socket.on('check_user_active', (data) => {
-      if (checkUserActive) {
+      let checkUserActive: string[] = Object.keys(user)
+      if (data.offTab) {
+        checkUserActive = checkUserActive.filter((user_id) => user_id !== data.user_id)
+      }
+      if ((checkUserActive as string[]).includes(data.user_id)) {
         socket.emit('check_user_active_client', true)
         return
       } else {
         socket.emit('check_user_active_client', false)
-        return 
+        return
       }
     })
 
     socket.on('disconnect', () => {
       delete user[user_id]
-      console.log('co user da roi khoi', socket.id)
-      console.log(user)
+      // console.log('co user da roi khoi', socket.id)
+      // console.log(user)
     })
   })
 }

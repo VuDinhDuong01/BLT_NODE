@@ -93,7 +93,7 @@ export const commentServices = {
                 as: 'info',
                 in: {
                   avatar: '$$info.avatar',
-                  username: '$$info.username'
+                  username: '$$info.name'
                 }
               }
             }
@@ -179,7 +179,7 @@ export const commentServices = {
                 created_at: '$replies_comments.created_at',
                 updated_at: '$replies_comments.updated_at',
                 avatar: '$user.avatar',
-                username: '$user.username'
+                username: '$user.name'
               }
             }
           }
