@@ -32,14 +32,13 @@ export const TweetServices = {
 
     const arrayMentions = await Promise.all(
       mentions?.map(async (mention) => {
-        const result = await userModel.findOne({ name: mention })
+        const result = await userModel.findOne({ name: { $regex: mention, $options: 'i' } });
         return result
       }) || []
     )
     const idUser = arrayMentions?.map((item: any) => item?._id)
-    console.log(idUser)
 
-    await tweetModel.create({
+    const res = await tweetModel.create({
       hashtags: idHashtags,
       content,
       audience,
@@ -47,9 +46,13 @@ export const TweetServices = {
       medias,
       user_id: new mongoose.Types.ObjectId(user_id as unknown as string)
     })
+
     return {
       message: 'create tweet successfully',
-      data: {}
+      data: idUser.length > 0 ? {
+        tweet_id: res._id,
+        user_ids: idUser
+      } : {}
     }
   },
   increaseViews: async ({ tweet_id, user_id }: { tweet_id: string; user_id: string }) => {
@@ -206,7 +209,7 @@ export const TweetServices = {
 
 
   },
-  getListTweet: async ({ id_user, page, limit, title_tweet }: { id_user?:string , page: string; limit: string, title_tweet?: string }) => {
+  getListTweet: async ({ id_user, page, limit, title_tweet }: { id_user?: string, page: string; limit: string, title_tweet?: string }) => {
     if (title_tweet === 'for_you') {
       const [listTweet, total_records] = await Promise.all([
         tweetModel.aggregate<GenerateType<TweetDetail[]>>([
@@ -352,16 +355,16 @@ export const TweetServices = {
         current_page: Number(limit) * (Number(page) - 1)
       }
     } else {
-      if(id_user !== ''){
+      if (id_user !== '') {
         const [listTweet, total_records] = await Promise.all([
           followModel.aggregate<GenerateType<TweetDetail[]>>([
             {
               $match: {
-                
-             follower_id: new mongoose.Types.ObjectId(id_user)
+
+                follower_id: new mongoose.Types.ObjectId(id_user)
               }
             }, {
-            $lookup: {
+              $lookup: {
                 from: 'tweet',
                 localField: 'following_id',
                 foreignField: 'user_id',
@@ -529,7 +532,7 @@ export const TweetServices = {
                 follower_id: new mongoose.Types.ObjectId(id_user)
               }
             }, {
-            $lookup: {
+              $lookup: {
                 from: 'tweet',
                 localField: 'following_id',
                 foreignField: 'user_id',
@@ -570,8 +573,8 @@ export const TweetServices = {
           current_page: Number(limit) * (Number(page) - 1)
         }
       }
-     
-      
+
+
     }
 
   },
