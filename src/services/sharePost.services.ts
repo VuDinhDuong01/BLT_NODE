@@ -9,13 +9,12 @@ export const sharePostServices = {
     userId, postId, content, medias
   }: { userId: string, postId: string , content: string , medias: string[]}) => {
 
-    await sharePostModel.create({
+    const res = await sharePostModel.create({
       userId: new mongoose.Types.ObjectId(userId),
       postId: new mongoose.Types.ObjectId(postId),
       content,
       medias
     })
-
     return {
       message: 'create share post successfully',
       data: {}

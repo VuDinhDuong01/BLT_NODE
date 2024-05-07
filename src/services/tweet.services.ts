@@ -294,6 +294,19 @@ export const TweetServices = {
           },
           {
             $lookup: {
+              from: "share_post",
+              localField: "_id",
+              foreignField: "postId",
+              as: "share_post"
+            },
+          },
+          { $addFields: {
+            count_share_post:{
+              $size:"$share_post"
+            }
+          }},
+          {
+            $lookup: {
               from: 'comment',
               localField: '_id',
               foreignField: 'tweet_id',
@@ -329,7 +342,8 @@ export const TweetServices = {
                 avatar: '$user.avatar',
                 name: '$user.name',
                 bio: '$user.bio'
-              }
+              },
+              count_share_post:1
             }
           },
           {
@@ -476,6 +490,19 @@ export const TweetServices = {
             },
             {
               $lookup: {
+                from: "share_post",
+                localField: "_id",
+                foreignField: "postId",
+                as: "share_post"
+              },
+            },
+            { $addFields: {
+              count_share_post:{
+                $size:"$share_post"
+              }
+            }},
+            {
+              $lookup: {
                 from: 'comment',
                 localField: '_id',
                 foreignField: 'tweet_id',
@@ -511,7 +538,8 @@ export const TweetServices = {
                   avatar: '$user.avatar',
                   name: '$user.name',
                   bio: '$user.bio'
-                }
+                },
+                count_share_post:1
               }
             },
             {

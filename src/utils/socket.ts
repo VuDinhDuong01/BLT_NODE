@@ -81,6 +81,7 @@ export const socketConfig = (httpServer: any) => {
     GenerateSocket({ receiver_type: 'send_notification_reply_comment', sender_type: 'notification_reply_comment' })
     GenerateSocket({ receiver_type: 'send_notification_message', sender_type: 'notification_message' })
     GenerateSocket({ receiver_type: 'send_notification_mentions', sender_type: 'notification_mentions' })
+    GenerateSocket({ receiver_type: 'send_notification_share_post', sender_type: 'notification_share_post' })
 
     socket.on('follow_user', async (data) => {
       const receiver_socket_id = user[data.to]?.socket_id
