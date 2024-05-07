@@ -4,8 +4,8 @@ import { sharePostServices } from '~/services/sharePost.services'
 export const sharePostController = {
   createSharePost: async (req: Request, res: Response) => {
     try {
-      const { userId, postId } = req.body
-      const response = await sharePostServices.createSharePost({ userId, postId })
+      const { userId, postId , content, medias} = req.body
+      const response = await sharePostServices.createSharePost({ userId, postId , content, medias})
       return res.json(response)
     } catch (error: unknown) {
       console.log(error)

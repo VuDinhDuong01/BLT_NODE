@@ -6,12 +6,14 @@ import { sharePostModel } from '~/models/model/share-post'
 
 export const sharePostServices = {
   createSharePost: async ({
-    userId, postId
-  }: { userId: string, postId: string }) => {
+    userId, postId, content, medias
+  }: { userId: string, postId: string , content: string , medias: string[]}) => {
 
     await sharePostModel.create({
       userId: new mongoose.Types.ObjectId(userId),
-      postId: new mongoose.Types.ObjectId(postId)
+      postId: new mongoose.Types.ObjectId(postId),
+      content,
+      medias
     })
 
     return {

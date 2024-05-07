@@ -7,7 +7,7 @@ import { validateAccessToken } from '~/middlewares/user.middlewares'
 
 const route = Router()
 
-route.post('/share-post', validateAccessToken, sharePostController.createSharePost)
+route.post('/share_post', validateAccessToken, sharePostController.createSharePost)
 route.get('/share-post/:tweet_id', validateAccessToken, TweetController.getTweetDetail)
 route.get('/share-post', validateAccessToken, sharePostController.getSharePost)
 
