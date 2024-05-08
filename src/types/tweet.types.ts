@@ -12,6 +12,11 @@ export interface Tweet {
   user_views?: number
   updated_at?: Date
   created_at?: Date
+  medias_share?: string[]
+  username_share?: string
+  content_share?: string
+  check_share?: boolean
+  avatar_share?: string
 }
 
 export enum TweetAudience {

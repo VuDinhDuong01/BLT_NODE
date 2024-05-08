@@ -6,14 +6,30 @@ export const TweetController = {
   createTweet: async (req: Request, res: Response) => {
     try {
       const { user_id } = req.verify_access_token as verify_access_token
-      const { hashtags, content, audience, mentions, medias } = req.body
+      const {
+        hashtags,
+        content,
+        audience,
+        mentions,
+        medias,
+        medias_share,
+        username_share,
+        content_share,
+        check_share,
+        avatar_share
+      } = req.body
       const response = await TweetServices.createTweet({
         hashtags,
         content,
         audience,
         mentions,
         medias,
-        user_id: user_id
+        user_id: user_id,
+        medias_share,
+        username_share,
+        content_share,
+        check_share,
+        avatar_share
       })
       return res.json(response)
     } catch (error: unknown) {

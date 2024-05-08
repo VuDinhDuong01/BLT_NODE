@@ -15,7 +15,12 @@ export const TweetServices = {
     audience,
     mentions,
     medias,
-    user_id
+    user_id,
+    medias_share,
+    username_share,
+    content_share,
+    check_share,
+    avatar_share
   }: Omit<Tweet, 'created_at' | 'updated_at' | 'user_views' | 'guest_views'>) => {
     const arrayHashTag = await Promise.all(
       hashtags?.map(async (item) => {
@@ -44,7 +49,12 @@ export const TweetServices = {
       audience,
       mentions: idUser,
       medias,
-      user_id: new mongoose.Types.ObjectId(user_id as unknown as string)
+      user_id: new mongoose.Types.ObjectId(user_id as unknown as string),
+      medias_share,
+      username_share,
+      content_share,
+      check_share,
+      avatar_share
     })
 
     return {
@@ -300,11 +310,13 @@ export const TweetServices = {
               as: "share_post"
             },
           },
-          { $addFields: {
-            count_share_post:{
-              $size:"$share_post"
+          {
+            $addFields: {
+              count_share_post: {
+                $size: "$share_post"
+              }
             }
-          }},
+          },
           {
             $lookup: {
               from: 'comment',
@@ -343,7 +355,12 @@ export const TweetServices = {
                 name: '$user.name',
                 bio: '$user.bio'
               },
-              count_share_post:1
+              count_share_post: 1,
+              check_share: 1,
+              medias_share: 1,
+              username_share: 1,
+              content_share: 1,
+              avatar_share: 1
             }
           },
           {
@@ -496,11 +513,13 @@ export const TweetServices = {
                 as: "share_post"
               },
             },
-            { $addFields: {
-              count_share_post:{
-                $size:"$share_post"
+            {
+              $addFields: {
+                count_share_post: {
+                  $size: "$share_post"
+                }
               }
-            }},
+            },
             {
               $lookup: {
                 from: 'comment',
@@ -539,7 +558,12 @@ export const TweetServices = {
                   name: '$user.name',
                   bio: '$user.bio'
                 },
-                count_share_post:1
+                count_share_post: 1,
+                check_share: 1,
+                medias_share: 1,
+                username_share: 1,
+                content_share: 1,
+                avatar_share: 1
               }
             },
             {
