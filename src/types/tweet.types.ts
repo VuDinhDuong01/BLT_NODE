@@ -16,7 +16,8 @@ export interface Tweet {
   username_share?: string
   content_share?: string
   check_share?: boolean
-  avatar_share?: string
+  avatar_share?: string,
+  postId?:string 
 }
 
 export enum TweetAudience {

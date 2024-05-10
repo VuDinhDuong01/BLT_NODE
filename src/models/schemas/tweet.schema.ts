@@ -21,6 +21,7 @@ export interface Tweets {
   check_share?: boolean
   avatar_share?: string
   username_share?: string
+  postId?: string
 }
 export const tweetSchema = new Schema<Tweets>(
   {
@@ -38,7 +39,8 @@ export const tweetSchema = new Schema<Tweets>(
     content_share: { type: String, default: '' },
     check_share: { type: Boolean, default: false },
     avatar_share: { type: String, default: '' },
-    username_share: { type: String, default: '' }
+    username_share: { type: String, default: '' },
+    postId: { type: String , default: '' }
   },
   {
     collection: 'tweet'

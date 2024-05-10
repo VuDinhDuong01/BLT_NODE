@@ -20,7 +20,8 @@ export const TweetServices = {
     username_share,
     content_share,
     check_share,
-    avatar_share
+    avatar_share,
+    postId
   }: Omit<Tweet, 'created_at' | 'updated_at' | 'user_views' | 'guest_views'>) => {
     const arrayHashTag = await Promise.all(
       hashtags?.map(async (item) => {
@@ -54,7 +55,8 @@ export const TweetServices = {
       username_share,
       content_share,
       check_share,
-      avatar_share
+      avatar_share,
+      postId
     })
 
     return {
@@ -360,7 +362,8 @@ export const TweetServices = {
               medias_share: 1,
               username_share: 1,
               content_share: 1,
-              avatar_share: 1
+              avatar_share: 1,
+              postId:1
             }
           },
           {
@@ -563,7 +566,8 @@ export const TweetServices = {
                 medias_share: 1,
                 username_share: 1,
                 content_share: 1,
-                avatar_share: 1
+                avatar_share: 1,
+                postId:1
               }
             },
             {

@@ -16,7 +16,8 @@ export const TweetController = {
         username_share,
         content_share,
         check_share,
-        avatar_share
+        avatar_share,
+        postId
       } = req.body
       const response = await TweetServices.createTweet({
         hashtags,
@@ -29,7 +30,8 @@ export const TweetController = {
         username_share,
         content_share,
         check_share,
-        avatar_share
+        avatar_share,
+        postId
       })
       return res.json(response)
     } catch (error: unknown) {
