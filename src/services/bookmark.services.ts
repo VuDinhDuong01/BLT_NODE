@@ -43,7 +43,7 @@ export const bookmarkServices = {
               as: 'bookmarks'
             }
           },
-           {
+          {
             '$lookup': {
               'from': 'tweet',
               'localField': 'tweet_id',
@@ -58,20 +58,26 @@ export const bookmarkServices = {
           }, {
             '$project': {
               '_id': '$tweet._id',
-              'id_bookmark':'$_id',
+              'id_bookmark': '$_id',
               'user_id': 1,
               'tweet_id': 1,
               'created_at': 1,
               'updated_at': 1,
-              'bookmarks':1,
+              'bookmarks': 1,
               'tweet_ids': '$tweet._id',
               'content': '$tweet.content',
               'hashtags': '$tweet.hashtags',
               'mentions': '$tweet.mentions',
-              'medias':'$tweet.medias',
+              'medias': '$tweet.medias',
               'audience': '$tweet.audience',
               'user_view': '$tweet.user_view',
-              'guest_view': '$tweet.guest_view'
+              'guest_view': '$tweet.guest_view',
+              'check_share': '$tweet.check_share',
+              'postId': '$tweet.postId',
+              'username_share': '$tweet.username_share',
+              'avatar_share': '$tweet.avatar_share',
+              'content_share': '$tweet.content_share',
+              'medias_share': '$tweet.medias_share'
             }
           },
           {
@@ -182,7 +188,13 @@ export const bookmarkServices = {
                 avatar: '$user.avatar',
                 name: '$user.name',
                 bio: '$user.bio'
-              }
+              },
+              check_share: 1,
+              postId: 1,
+              username_share: 1,
+              avatar_share: 1,
+              content_share: 1,
+              medias_share: 1
             }
           },
           {

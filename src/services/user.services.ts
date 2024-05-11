@@ -343,7 +343,13 @@ export const userServices = {
               user_views: '$tweet.user_views',
               guest_views: '$tweet.guest_views',
               updated_at: '$tweet.updated_at',
-              created_at: '$tweet.created_at'
+              created_at: '$tweet.created_at',
+              check_share: '$tweet.check_share',
+              postId: '$tweet.postId',
+              username_share: '$tweet.username_share',
+              avatar_share: '$tweet.avatar_share',
+              content_share: '$tweet.content_share',
+              medias_share: '$tweet.medias_share'
             }
           },
           {
@@ -461,7 +467,13 @@ export const userServices = {
                 username: '$user.username',
                 avatar: '$user.avatar',
                 name: '$user.name'
-              }
+              },
+              check_share: 1,
+              postId: 1,
+              username_share: 1,
+              avatar_share: 1,
+              content_share: 1,
+              medias_share: 1
             }
           },
           {
@@ -566,7 +578,13 @@ export const userServices = {
               user_views: '$tweet.user_views',
               guest_views: '$tweet.guest_views',
               updated_at: '$tweet.updated_at',
-              created_at: '$tweet.created_at'
+              created_at: '$tweet.created_at',
+              check_share: '$tweet.check_share',
+              postId: '$tweet.postId',
+              username_share: '$tweet.username_share',
+              avatar_share: '$tweet.avatar_share',
+              content_share: '$tweet.content_share',
+              medias_share: '$tweet.medias_share'
             }
           },
 
@@ -685,7 +703,13 @@ export const userServices = {
                 username: '$user.username',
                 avatar: '$user.avatar',
                 name: '$user.name'
-              }
+              },
+              check_share: 1,
+              postId: 1,
+              username_share: 1,
+              avatar_share: 1,
+              content_share: 1,
+              medias_share: 1
             }
           },
           {
@@ -827,7 +851,13 @@ export const userServices = {
               user_views: '$tweet.user_views',
               guest_views: '$tweet.guest_views',
               updated_at: '$tweet.updated_at',
-              created_at: '$tweet.created_at'
+              created_at: '$tweet.created_at',
+              check_share: '$tweet.check_share',
+              postId: '$tweet.postId',
+              username_share: '$tweet.username_share',
+              avatar_share: '$tweet.avatar_share',
+              content_share: '$tweet.content_share',
+              medias_share: '$tweet.medias_share'
             }
           },
 
@@ -951,7 +981,13 @@ export const userServices = {
                 // website: '$user.website',
                 // cover_photo: '$user.cover_photo',
                 // roles: '$user.roles'
-              }
+              },
+              check_share: 1,
+              postId: 1,
+              username_share: 1,
+              avatar_share: 1,
+              content_share: 1,
+              medias_share: 1
             }
           },
           {
@@ -1023,7 +1059,6 @@ export const userServices = {
       data: res
     }
   },
-  
 
   getAllUser: async ({
     limit,
@@ -1092,6 +1127,5 @@ export const userServices = {
     return {
       message: 'delete  many user successfully'
     }
-  },
-
+  }
 }

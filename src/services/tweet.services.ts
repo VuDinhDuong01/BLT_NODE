@@ -213,7 +213,13 @@ export const TweetServices = {
             avatar: '$user.avatar',
             name: '$user.name',
             bio: '$user.bio'
-          }
+          },
+          check_share:1,
+          postId:1,
+          username_share:1,
+          avatar_share:1,
+          content_share:1,
+          medias_share:1
         }
       },
     ])
