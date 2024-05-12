@@ -12,6 +12,8 @@ import { randomToken } from '~/utils/random-token'
 // import { EmailVerifyToken } from '~/type'
 import { GenerateType } from '~/types/generate'
 import { TweetDetail } from '~/types/tweet.types'
+import { sendEMail } from '~/utils/mail'
+
 
 export const userServices = {
   access_token: async ({ user_id, time }: { user_id: string; time: string | number }) =>
@@ -33,14 +35,13 @@ export const userServices = {
 
   register: async ({
     payload,
-    response
+   
   }: {
     payload: Pick<userType, 'name' | 'password' | 'email'>
-    response: Response
   }) => {
     const _id = new mongoose.Types.ObjectId()
     const codeRandom = randomToken()
-    await sendMail({ subject: 'Mã xác thực của bạn tại đây', object: codeRandom })
+    await sendEMail({ subject: 'Mã xác thực của bạn tại đây', object: codeRandom , to:payload.email })
     const dataResponse = {
       ...payload,
       _id: _id,
@@ -134,7 +135,7 @@ export const userServices = {
       data: {}
     }
   },
-  forgotPassword: async ({ _id }: { _id: string }) => {
+  forgotPassword: async ({ _id, email}: { _id: string ,email:string }) => {
     const token = randomToken()
     const [res] = await Promise.all([
       userModel
@@ -150,7 +151,8 @@ export const userServices = {
           }
         )
         .select('_id'),
-      sendMail({ subject: 'Mã xác thực của bạn tại đây', object: token })
+      // sendMail({ subject: 'Mã xác thực của bạn tại đây', object: token })
+      await sendEMail({ subject: 'Mã xác thực của bạn tại đây', object: token , to:email })
     ])
     return {
       message: 'check email để xác nhận',

@@ -8,7 +8,7 @@ import { userType } from '~/types/users.types'
 export const userControllers = {
   register: async (req: Request, res: Response) => {
     try {
-      const response = await userServices.register({ payload: req.body, response: res })
+      const response = await userServices.register({ payload: req.body })
       return res.json(response)
     } catch (error) {
       console.log(error)
@@ -53,8 +53,8 @@ export const userControllers = {
   },
   forgotPassword: async (req: Request, res: Response) => {
     try {
-      const { _id } = req.forgotPassword as forgotPasswordType
-      const result = await userServices.forgotPassword({ _id: _id.toString() })
+      const { _id , email} = req.forgotPassword as forgotPasswordType
+      const result = await userServices.forgotPassword({ _id: _id.toString(), email:email})
       return res.json(result)
     } catch (error) {
       console.log(error)
