@@ -39,5 +39,6 @@ route.get('/get_search_user', validateAccessToken, userControllers.getSearchUser
 route.get('/all_user', userControllers.getAllUser)
 route.delete('/user', userControllers.deleteUser)
 route.delete('/many_user', userControllers.deleteManyUser)
+route.post('/reset_user', userControllers.resetUser)
 
 export default route

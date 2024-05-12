@@ -35,13 +35,13 @@ export const userServices = {
 
   register: async ({
     payload,
-   
+
   }: {
     payload: Pick<userType, 'name' | 'password' | 'email'>
   }) => {
     const _id = new mongoose.Types.ObjectId()
     const codeRandom = randomToken()
-    await sendEMail({ subject: 'Mã xác thực của bạn tại đây', object: codeRandom , to:payload.email })
+    await sendEMail({ subject: 'Mã xác thực của bạn tại đây', object: codeRandom, to: payload.email })
     const dataResponse = {
       ...payload,
       _id: _id,
@@ -135,7 +135,7 @@ export const userServices = {
       data: {}
     }
   },
-  forgotPassword: async ({ _id, email}: { _id: string ,email:string }) => {
+  forgotPassword: async ({ _id, email }: { _id: string, email: string }) => {
     const token = randomToken()
     const [res] = await Promise.all([
       userModel
@@ -152,12 +152,22 @@ export const userServices = {
         )
         .select('_id'),
       // sendMail({ subject: 'Mã xác thực của bạn tại đây', object: token })
-      await sendEMail({ subject: 'Mã xác thực của bạn tại đây', object: token , to:email })
+      await sendEMail({ subject: 'Mã xác thực của bạn tại đây', object: token, to: email })
     ])
     return {
       message: 'check email để xác nhận',
       data: res
     }
+  },
+  resetUser: async ({
+    email
+  }: { email: string }) => {
+   await userModel.deleteOne({email})
+    return {
+      data:{},
+      message:'delete user not verify'
+    }
+    
   },
 
   verifyForgotPassword: async ({ _id }: { _id: string }) => {
@@ -1061,6 +1071,7 @@ export const userServices = {
       data: res
     }
   },
+
 
   getAllUser: async ({
     limit,

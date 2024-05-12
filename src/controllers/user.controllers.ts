@@ -60,6 +60,14 @@ export const userControllers = {
       console.log(error)
     }
   },
+  resetUser:async(req: Request, res: Response)=>{
+    try{
+      const result= await userServices.resetUser(req.body)
+      return res.json(result )
+    }catch(error:unknown){
+      console.log(error)
+    }
+  },
   verifyForgotPassword: async (req: Request, res: Response) => {
     try {
       const { _id } = req.verifyForgotPassword as forgotPasswordType
