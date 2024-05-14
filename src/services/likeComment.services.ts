@@ -28,12 +28,13 @@ export const likeCommentServices = {
             new: true
           }
         )
-      } else {
-        await likeCommentModel.deleteOne({
-          user_id: new mongoose.Types.ObjectId(user_id),
-          comment_id: new mongoose.Types.ObjectId(comment_id)
-        })
       }
+      // else {
+      //   await likeCommentModel.deleteOne({
+      //     user_id: new mongoose.Types.ObjectId(user_id),
+      //     comment_id: new mongoose.Types.ObjectId(comment_id)
+      //   })
+      // }
     } else {
       await likeCommentModel.create({
         comment_id: new mongoose.Types.ObjectId(comment_id),

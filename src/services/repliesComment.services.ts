@@ -41,15 +41,17 @@ export const repliesCommentServices = {
         user_id: String(item.user_id)
       }
     })
+
     const checkRepliesComment = convertObjectIdToString?.some((item) => item.user_id === user_id)
+    console.log(replies_comment_id)
     if (checkRepliesComment) {
       const res = await repliesCommentModel.findOneAndUpdate(
         {
           _id: new mongoose.Types.ObjectId(replies_comment_id)
         },
         {
-          $pull: {
-            replies_like_comments: { user_id: new mongoose.Types.ObjectId(user_id) }
+          $set: {
+            replies_like_comments: { user_id: new mongoose.Types.ObjectId(user_id), icon: icon }
           }
         },
         {
@@ -67,6 +69,7 @@ export const repliesCommentServices = {
         },
         {
           $push: {
+
             replies_like_comments: {
               user_id: new mongoose.Types.ObjectId(user_id),
               icon: icon
