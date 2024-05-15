@@ -8,7 +8,7 @@ const route = Router()
 
 route.post('/tweet', validateAccessToken, validationTweet, TweetController.createTweet)
 route.get('/tweet/:tweet_id', validateAccessToken, TweetController.getTweetDetail)
-route.get('/tweet', validateAccessToken, TweetController.getListTweet)
+route.get('/list_tweet', validateAccessToken, TweetController.getListTweet)
 
 route.get('/all_tweet', TweetController.getAllTweet)
 route.delete('/tweet', TweetController.deleteTweet)
