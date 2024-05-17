@@ -72,7 +72,7 @@ export const uploadFileController = {
       storage,
       limits: {
         fieldNameSize: 200,
-        fileSize: 30 * 1024 * 1024
+        fileSize: 30 * 1024 * 1024 *1024
       },
       fileFilter
     }).single('video')
