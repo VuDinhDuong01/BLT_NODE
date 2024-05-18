@@ -11,7 +11,17 @@ enum MediaType {
   IMAGE,
   VIDEO
 }
-
+const typeVides = [
+  'video/mp4',
+  'video/x-msvideo',
+  'video/quicktime',
+  'video/x-ms-wmv',
+  'video/x-flv',
+  'video/x-matroska',
+  'video/webm',
+  'video/3gpp',
+  'video/mpeg'
+];
 export const uploadFileController = {
   uploadImage: async (req: Request, res: Response) => {
     try {
@@ -56,7 +66,7 @@ export const uploadFileController = {
     })
 
     const fileFilter = (req: any, file: any, cb: any) => {
-      if (file.mimetype === 'video/mp4') {
+      if (typeVides.includes(file.mimetype)) {
         cb(null, true)
       } else {
         cb(
