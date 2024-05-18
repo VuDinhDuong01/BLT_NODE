@@ -14,7 +14,6 @@ import { GenerateType } from '~/types/generate'
 import { TweetDetail } from '~/types/tweet.types'
 import { sendEMail } from '~/utils/mail'
 
-
 export const userServices = {
   access_token: async ({ user_id, time }: { user_id: string; time: string | number }) =>
     await signJWT({
@@ -33,12 +32,7 @@ export const userServices = {
     })
   },
 
-  register: async ({
-    payload,
-
-  }: {
-    payload: Pick<userType, 'name' | 'password' | 'email'>
-  }) => {
+  register: async ({ payload }: { payload: Pick<userType, 'name' | 'password' | 'email'> }) => {
     const _id = new mongoose.Types.ObjectId()
     const codeRandom = randomToken()
     await sendEMail({ subject: 'Mã xác thực của bạn tại đây', object: codeRandom, to: payload.email })
@@ -135,7 +129,7 @@ export const userServices = {
       data: {}
     }
   },
-  forgotPassword: async ({ _id, email }: { _id: string, email: string }) => {
+  forgotPassword: async ({ _id, email }: { _id: string; email: string }) => {
     const token = randomToken()
     const [res] = await Promise.all([
       userModel
@@ -159,15 +153,12 @@ export const userServices = {
       data: res
     }
   },
-  resetUser: async ({
-    email
-  }: { email: string }) => {
-   await userModel.deleteOne({email})
+  resetUser: async ({ email }: { email: string }) => {
+    await userModel.deleteOne({ email })
     return {
-      data:{},
-      message:'delete user not verify'
+      data: {},
+      message: 'delete user not verify'
     }
-    
   },
 
   verifyForgotPassword: async ({ _id }: { _id: string }) => {
@@ -1071,7 +1062,6 @@ export const userServices = {
       data: res
     }
   },
-
 
   getAllUser: async ({
     limit,

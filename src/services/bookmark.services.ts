@@ -27,8 +27,8 @@ export const bookmarkServices = {
   },
 
   getList: async ({ user_id, limit, page }: { user_id: string, limit: number, page: number }) => {
-    const [listTweet, total_records] = await Promise.all([
-      bookmarkModel.aggregate<GenerateType<TweetDetail[]>>(
+    
+     const listTweet= await  bookmarkModel.aggregate<GenerateType<TweetDetail[]>>(
         [
           {
             '$match': {
@@ -209,9 +209,13 @@ export const bookmarkServices = {
             $limit: Number(limit)
           }
         ]
-      ),
-      bookmarkModel.countDocuments()
-    ])
+      )
+      const   total_records = await  bookmarkModel.countDocuments({
+       
+          user_id: new mongoose.Types.ObjectId(user_id)}
+        
+      )
+   
 
     return {
       message: 'get list bookmark successfully',

@@ -232,6 +232,14 @@ export const commentServices = {
       })
     }
     $match.push({
+      $lookup: {
+        from: "users",
+        localField: "user_id",
+        foreignField: "_id",
+        as: "user"
+    }
+    })
+    $match.push({
       $sort: { created_at: -1 }
     })
     if (sort_by === 'content_comment') {

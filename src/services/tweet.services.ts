@@ -214,12 +214,12 @@ export const TweetServices = {
             name: '$user.name',
             bio: '$user.bio'
           },
-          check_share:1,
-          postId:1,
-          username_share:1,
-          avatar_share:1,
-          content_share:1,
-          medias_share:1
+          check_share: 1,
+          postId: 1,
+          username_share: 1,
+          avatar_share: 1,
+          content_share: 1,
+          medias_share: 1
         }
       },
     ])
@@ -369,7 +369,7 @@ export const TweetServices = {
               username_share: 1,
               content_share: 1,
               avatar_share: 1,
-              postId:1
+              postId: 1
             }
           },
           {
@@ -573,7 +573,7 @@ export const TweetServices = {
                 username_share: 1,
                 content_share: 1,
                 avatar_share: 1,
-                postId:1
+                postId: 1
               }
             },
             {
@@ -663,8 +663,17 @@ export const TweetServices = {
             $search: content
           }
         }
+          
       })
     }
+    $match.push({
+      $lookup: {
+          from: "users",
+          localField: "user_id",
+          foreignField: "_id",
+          as: "user"
+      }
+  })
     $match.push({
       $sort: { created_at: -1 }
     })
