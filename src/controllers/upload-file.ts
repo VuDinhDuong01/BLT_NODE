@@ -7,6 +7,7 @@ import fs from 'fs'
 import multer from 'multer'
 import { v2 as cloudinary } from 'cloudinary'
 import { configEnv } from '~/constants/configENV'
+
 enum MediaType {
   IMAGE,
   VIDEO
@@ -21,7 +22,12 @@ const typeVides = [
   'video/webm',
   'video/3gpp',
   'video/mpeg'
-];
+]
+cloudinary.config({
+  cloud_name: configEnv.CLOUDINARY_NAME,
+  api_key: configEnv.CLOUDINARY_API_KEY,
+  api_secret: configEnv.CLOUDINARY_API_SECRET
+})
 export const uploadFileController = {
   uploadImage: async (req: Request, res: Response) => {
     try {
@@ -82,7 +88,7 @@ export const uploadFileController = {
       storage,
       limits: {
         fieldNameSize: 200,
-        fileSize: 30 * 1024 * 1024 *1024
+        fileSize: 30 * 1024 * 1024 * 1024
       },
       fileFilter
     }).single('video')
@@ -134,5 +140,23 @@ export const uploadFileController = {
         }
       )
     })
+  },
+  uploadImageWithCloudinary: async(req: any, res: any, next: any) => {
+    try {
+      const images= req.files 
+      const imageUrls=[]
+      for( const image of images){
+        const result = await cloudinary.uploader.upload(image.path,{
+          resource_type:'auto'
+        })
+        imageUrls.push({
+          image:result.secure_url,
+          type:'IMAGE'
+        })
+      }
+     return res.json(imageUrls)
+    } catch (error: unknown) {
+      console.log(error)
+    }
   }
 }

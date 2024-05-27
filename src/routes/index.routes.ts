@@ -2,7 +2,7 @@ import { Application } from 'express'
 
 import userRoute from './user.routes'
 import followRoute from './follower.routes'
-import uploadFileRoute from './upload-file'
+import uploadFileRoute  from './upload-file'
 import tweetRoute from './tweet.routes'
 import bookmarkRoute from './bookmark.routes'
 import likeRoute from './like.routes'
