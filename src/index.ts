@@ -2,9 +2,13 @@ import express from 'express'
 import { createServer } from 'http'
 import { Server } from 'socket.io'
 import cors from 'cors'
+import {config} from 'dotenv'
 import helmet from 'helmet'
 import { rateLimit } from 'express-rate-limit'
 import swaggerUi from 'swagger-ui-express'
+config({
+  path: `.env.${process.env.CROSS_ENV}`
+})
 // import fs from 'fs'
 // import path from 'path'
 // import YAML from 'yaml'

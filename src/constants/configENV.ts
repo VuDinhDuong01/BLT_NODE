@@ -1,9 +1,10 @@
- import { config } from 'dotenv'
+/* eslint-disable prettier/prettier */
+import dotenv from 'dotenv'
 
-// const pathName = process.env.NODE_ENV
- config({
-    path: `.env`
- })
+ dotenv.config({
+  path: `.env.${process.env.NODE_ENV}`
+});
+
 
 export const configEnv = {
   PORT: process.env.PORT as string,

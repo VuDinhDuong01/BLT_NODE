@@ -1,2 +1,6 @@
 node_modules
 gitignore
+Dockerfile.dev
+Dockerfile.production
+openapi
+.dockerignore 

@@ -6,7 +6,7 @@ const transporter = nodemailer.createTransport({
   secure: false,
   auth: {
     user: 'duong2lophot@gmail.com',
-    pass: 'ynuqqhkysdaddlbt'
+    pass: 'szgrletfdsdawdwr'
   }
 })
 
@@ -14,7 +14,7 @@ const transporter = nodemailer.createTransport({
 export const sendEMail = async ({ to, subject, object }: { to: string; subject: string; object: string }) => {
   // send mail with defined transport object
   try {
-    const info = await transporter.sendMail({
+    await transporter.sendMail({
       from: 'Xác Thực email của bạn', // sender address
       to: to, // list of receivers
       subject: subject,
