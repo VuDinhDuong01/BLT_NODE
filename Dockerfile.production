@@ -7,11 +7,11 @@ COPY package*.json ./
 
 COPY tsconfig.json . 
 
-COPY .env.development . 
+COPY .env.production . 
 
 COPY ecosystem.config.js .
 
-RUN npm install 
+RUN npm install  -f
 
 COPY . .
 
@@ -25,13 +25,13 @@ COPY --from=developer /app/dist /app/dist
 
 COPY --from=developer /app/package*.json /app/
 
-COPY --from=developer /app/.env.development /app/.env.development
+COPY --from=developer /app/.env.production /app/.env.production
 
 COPY --from=developer /app/ecosystem.config.js /app/ecosystem.config.js 
 
 RUN npm install pm2 -g 
 
-RUN npm install --only=production
+RUN npm install -f  --only=production
 
 EXPOSE 4000
 

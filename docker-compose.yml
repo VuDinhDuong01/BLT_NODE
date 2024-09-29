@@ -14,15 +14,17 @@ services:
     networks:
       - connect
   node_app:
-    container_name: node_app
+    container_name: node_container
     build:
-      context: .
-      dockerfile: dockerfile.dev
-    restart: always
+     context: .
+     dockerfile: Dockerfile.production
     ports:
-      - "5000:4000"
+      - 9000:5000
+    networks:
+     - connect
     depends_on:
       - mongo
+    restart: always
 volumes:
   volume_mongo:
 networks:
