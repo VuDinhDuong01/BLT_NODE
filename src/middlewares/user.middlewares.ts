@@ -8,6 +8,7 @@ import { verifyJWT } from '~/utils/jwt'
 import { userModel } from '~/models/model/user.model'
 import { hashPassword } from '~/utils/hash-password'
 import mongoose from 'mongoose'
+import { config } from 'dotenv'
 
 
 export const validationRegister = validate(
@@ -127,7 +128,7 @@ export const validationRefreshToken = validate(
           options: async (value, { req }) => {
             try {
               const verifyRefreshToken = await verifyJWT({
-                privateKey: configEnv.PRIMARY_KEY_REFRESH_TOKEN,
+                privateKey: "REFRESH_TOKEN",
                 payload: req.body.refresh_token
               })
               req.refresh_token = verifyRefreshToken
@@ -230,9 +231,10 @@ export const validateAccessToken = validate(
       Authorization: {
         custom: {
           options: async (value, { req }) => {
+            console.log("refresh",process.env)
             const token = value?.split(' ')[1]
             try {
-              const verify_token = await verifyJWT({ privateKey: configEnv.PRIMARY_KEY, payload: token })
+              const verify_token = await verifyJWT({ privateKey: configEnv.PRIMARY_KEY_ACCESS_TOKEN, payload: token })
               req.verify_access_token = verify_token
             } catch (err) {
               throw new errorWithStatus({ message: 'Tokens expire', status: 401 })

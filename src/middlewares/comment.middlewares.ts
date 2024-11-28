@@ -9,6 +9,7 @@ export const validationComment = validate(
         isEmpty: false,
         errorMessage: 'tweet_id không được bỏ trống'
       },
+      
       user_id: {
         isEmpty: false,
         errorMessage: 'Trường này không được bỏ trống'

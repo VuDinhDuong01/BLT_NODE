@@ -18,16 +18,16 @@ export const userServices = {
   access_token: async ({ user_id, time }: { user_id: string; time: string | number }) =>
     await signJWT({
       payload: { user_id: user_id },
-      privateKey: configEnv.PRIMARY_KEY,
+      privateKey: configEnv.PRIMARY_KEY_ACCESS_TOKEN,
       options: { expiresIn: time }
     }),
   refresh_token: async ({ user_id, exp }: { user_id: string; exp?: number }) => {
     if (exp) {
-      return await signJWT({ payload: { user_id: user_id, exp }, privateKey: configEnv.PRIMARY_KEY_REFRESH_TOKEN })
+      return await signJWT({ payload: { user_id: user_id, exp }, privateKey: configEnv.PRIMARY_KEY_REFRESH_TOKEN})
     }
     return await signJWT({
       payload: { user_id: user_id },
-      privateKey: configEnv.PRIMARY_KEY_REFRESH_TOKEN,
+      privateKey:configEnv.PRIMARY_KEY_REFRESH_TOKEN,
       options: { expiresIn: '10h' }
     })
   },
@@ -55,6 +55,7 @@ export const userServices = {
     const checkExist = await userModel.findOne({ email })
     return checkExist
   },
+  
 
   EmailVerifyToken: async (profile: userType) => {
     const [access_token, refresh_token] = await Promise.all([

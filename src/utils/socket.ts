@@ -1,18 +1,20 @@
 import mongoose from 'mongoose'
 import { Server } from 'socket.io'
-import { configEnv } from '~/constants/configENV'
+
 import { conversationsModel } from '~/models/model/conversations.model'
 import { notificationModel } from '~/models/model/notification.model'
 
 export const socketConfig = (httpServer: any) => {
-  const io = new Server(httpServer, {
+  const io = new Server(httpServer
+    , {
     cors: {
-      origin: configEnv.URL_CLIENT,
+      origin: "http://localhost:5173",
       credentials: true,
       methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
       allowedHeaders: ['Content-Type', 'Authorization']
     }
-  })
+  }
+)
 
   const user: any = {}
   io.on('connection', async (socket) => {

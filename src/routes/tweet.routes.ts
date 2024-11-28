@@ -6,7 +6,7 @@ import { validateAccessToken } from '~/middlewares/user.middlewares'
 
 const route = Router()
 
-route.post('/tweet', validateAccessToken, validationTweet, TweetController.createTweet)
+route.post('/tweet', validateAccessToken,validationTweet, TweetController.createTweet)
 route.get('/tweet/:tweet_id', validateAccessToken, TweetController.getTweetDetail)
 route.get('/list_tweet', validateAccessToken, TweetController.getListTweet)
 

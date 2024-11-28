@@ -6,9 +6,8 @@ import {config} from 'dotenv'
 import helmet from 'helmet'
 import { rateLimit } from 'express-rate-limit'
 import swaggerUi from 'swagger-ui-express'
-config({
-  path: `.env.${process.env.CROSS_ENV}`
-})
+
+config()
 // import fs from 'fs'
 // import path from 'path'
 // import YAML from 'yaml'
@@ -48,8 +47,8 @@ const app = express()
 const httpServer = createServer(app)
 
 socketConfig(httpServer)
-
-const port = configEnv.PORT || 4000
+console.log("port:" , configEnv.PORT)
+const port = configEnv.PORT || 5000
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use(
