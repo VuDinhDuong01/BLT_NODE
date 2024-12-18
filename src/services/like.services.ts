@@ -64,6 +64,14 @@ export const likeServices = {
       }
     })
     $match.push({
+      $lookup: {
+        from: "tweet",
+        localField: "tweet_id",
+        foreignField: "_id",
+        as: "tweet"
+      }
+    })
+    $match.push({
       $sort: { created_at: -1 }
     })
     if (sort_by === 'name') {
